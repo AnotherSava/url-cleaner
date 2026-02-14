@@ -6,7 +6,6 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Version>1.0.0</Version>
     <Product>URL Cleaner</Product>
     <AssemblyTitle>URL Cleaner</AssemblyTitle>
   </PropertyGroup>

@@ -54,6 +54,15 @@ Site rules support:
 - `excludedParams` — params to keep even if they're in the global list
 - `stripPathSegments` — remove path segments matching these prefixes
 
+## Code signing policy
+
+URL Cleaner is signed with free code signing provided by [SignPath.io](https://signpath.io), certificate by [SignPath Foundation](https://signpath.org).
+
+**Team roles:**
+- Author, reviewer, and approver: [AnotherSava](https://github.com/AnotherSava)
+
+**Privacy:** This program will not transfer any information to other networked systems unless specifically requested by the user or the person installing or operating it.
+
 ## License
 
 [GPL-3.0](LICENSE)
