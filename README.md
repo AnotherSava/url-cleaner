@@ -1,10 +1,10 @@
-# URL Cleaner
+# Another URL Cleaner
 
 A Windows background app that automatically strips tracking parameters from URLs on the clipboard.
 
 ## How it works
 
-URL Cleaner runs in the system tray and monitors your clipboard. When you copy a URL, it instantly removes tracking parameters and replaces the clipboard contents with the cleaned URL — no manual steps needed.
+Another URL Cleaner runs in the system tray and monitors your clipboard. When you copy a URL, it instantly removes tracking parameters and replaces the clipboard contents with the cleaned URL — no manual steps needed.
 
 ## Features
 
@@ -56,7 +56,7 @@ Site rules support:
 
 ## Code signing policy
 
-URL Cleaner is signed with free code signing provided by [SignPath.io](https://signpath.io), certificate by [SignPath Foundation](https://signpath.org).
+Another URL Cleaner is signed with free code signing provided by [SignPath.io](https://signpath.io), certificate by [SignPath Foundation](https://signpath.org).
 
 **Team roles:**
 - Author, reviewer, and approver: [AnotherSava](https://github.com/AnotherSava)

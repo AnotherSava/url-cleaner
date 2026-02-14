@@ -6,8 +6,8 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Product>URL Cleaner</Product>
-    <AssemblyTitle>URL Cleaner</AssemblyTitle>
+    <Product>Another URL Cleaner</Product>
+    <AssemblyTitle>Another URL Cleaner</AssemblyTitle>
   </PropertyGroup>
 
   <ItemGroup>
