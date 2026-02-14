@@ -1,0 +1,12 @@
+# Build output
+bin/
+obj/
+
+# Rider
+.idea/
+
+# Claude Code
+.claude/
+
+# Runtime config (generated on first run)
+config.json

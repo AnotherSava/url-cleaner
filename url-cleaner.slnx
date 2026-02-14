@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/UrlCleaner.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/UrlCleaner.Tests.csproj" />
+  </Folder>
+  <File Path="LICENSE" />
+</Solution>

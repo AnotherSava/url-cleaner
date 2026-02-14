@@ -1,0 +1,67 @@
+{
+  "trimUrl": true,
+  "trackingParams": [
+    {
+      "comment": "Google / GA",
+      "params": [
+        "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content",
+        "utm_id", "utm_source_platform", "utm_creative_format", "utm_marketing_tactic",
+        "gclid", "gclsrc", "dclid", "gbraid", "wbraid", "gad_source",
+        "_ga", "_gl", "srsltid"
+      ]
+    },
+    {
+      "comment": "Social",
+      "params": ["fbclid", "igshid", "twclid", "ttclid", "ScCid", "li_fat_id"]
+    },
+    {
+      "comment": "Microsoft",
+      "params": ["msclkid"]
+    },
+    {
+      "comment": "Mailchimp / Bronto",
+      "params": ["mc_cid", "mc_eid", "_bta_tid", "_bta_c"]
+    },
+    {
+      "comment": "Responsys",
+      "params": ["trk_contact", "trk_msg", "trk_module", "trk_sid"]
+    },
+    {
+      "comment": "Klaviyo",
+      "params": ["_ke", "_kx"]
+    },
+    {
+      "comment": "HubSpot",
+      "params": [
+        "hsa_acc", "hsa_cam", "hsa_grp", "hsa_ad", "hsa_src",
+        "hsa_tgt", "hsa_kw", "hsa_mt", "hsa_net", "hsa_ver"
+      ]
+    },
+    {
+      "comment": "Matomo",
+      "params": ["mtm_campaign", "mtm_source", "mtm_medium", "mtm_keyword", "mtm_cid", "mtm_content"]
+    },
+    {
+      "comment": "Piwik",
+      "params": ["pk_campaign", "pk_kwd", "pk_keyword", "pk_source", "pk_medium", "pk_content", "pk_cid"]
+    },
+    {
+      "comment": "Other",
+      "params": ["ef_id", "epik", "yclid"]
+    }
+  ],
+  "siteRules": [
+    {
+      "suffix": ["amazon.com", "amazon.ca", "amazon.co.uk"],
+      "enabled": true,
+      "stripAllParams": true,
+      "stripPathSegments": "ref="
+    },
+    {
+      "suffix": "youtube.com",
+      "enabled": true,
+      "additionalParams": [],
+      "excludedParams": ["pp"]
+    }
+  ]
+}
