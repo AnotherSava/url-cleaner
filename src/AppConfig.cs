@@ -55,6 +55,11 @@ public class AppConfig
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
     };
 
+    /// <summary>
+    /// The resolved path of the config file used by the last <see cref="Load"/> call.
+    /// </summary>
+    public static string ConfigFilePath { get; private set; } = "";
+
     private static string DefaultConfigPath =>
         Path.Combine(AppContext.BaseDirectory, "config.json");
 
@@ -65,6 +70,7 @@ public class AppConfig
     public static AppConfig Load(string? configPath = null)
     {
         var path = configPath ?? DefaultConfigPath;
+        ConfigFilePath = Path.GetFullPath(path);
         if (File.Exists(path))
         {
             var json = File.ReadAllText(path);

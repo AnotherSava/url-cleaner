@@ -11,6 +11,8 @@ Another URL Cleaner runs in the system tray and monitors your clipboard. When yo
 - **60+ tracking parameters** stripped by default (Google Analytics, Facebook, HubSpot, Mailchimp, and more)
 - **Per-site rules** — e.g. Amazon: strip all query params and `ref=` path segments
 - **Configurable** via `config.json` (auto-generated on first run)
+- **Pause cleaning** from the tray menu — temporarily disables URL cleaning without exiting
+- **Open config location** from the tray menu — opens Explorer with the config file selected
 - **Start with Windows** option in the tray menu
 
 ## Building from source
@@ -26,7 +28,7 @@ The built executable will be in `src/bin/Debug/net10.0-windows/`.
 
 ## Configuration
 
-On first run, a `config.json` file is created next to the executable with sensible defaults.
+On first run, a `config.json` file is created next to the executable with sensible defaults. Changes to the config file are picked up automatically — no restart needed.
 
 **`trackingParams`** — groups of query parameter names to strip from all URLs:
 

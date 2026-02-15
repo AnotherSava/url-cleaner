@@ -17,13 +17,19 @@ public class ClipboardMonitor : NativeWindow, IDisposable
     [DllImport("user32.dll", SetLastError = true)]
     private static extern bool RemoveClipboardFormatListener(IntPtr hwnd);
 
-    private readonly AppConfig _config;
+    private AppConfig _config;
+    private readonly string _configFilePath;
+    private DateTime _configLastModified;
     private bool _isUpdatingClipboard;
     private bool _disposed;
 
-    public ClipboardMonitor(AppConfig config)
+    public bool Paused { get; set; }
+
+    public ClipboardMonitor(AppConfig config, string configFilePath)
     {
         _config = config;
+        _configFilePath = configFilePath;
+        _configLastModified = File.GetLastWriteTimeUtc(configFilePath);
 
         // NativeWindow needs a window handle to receive messages.
         // CreateHandle() makes an invisible message-only window for us.
@@ -41,8 +47,30 @@ public class ClipboardMonitor : NativeWindow, IDisposable
         base.WndProc(ref m);
     }
 
+    private void ReloadConfigIfChanged()
+    {
+        try
+        {
+            var lastWrite = File.GetLastWriteTimeUtc(_configFilePath);
+            if (lastWrite <= _configLastModified)
+                return;
+
+            _config = AppConfig.Load(_configFilePath);
+            _configLastModified = lastWrite;
+        }
+        catch
+        {
+            // File may be mid-write or locked — keep using the current config.
+        }
+    }
+
     private void OnClipboardChanged()
     {
+        if (Paused)
+            return;
+
+        ReloadConfigIfChanged();
+
         try
         {
             if (!Clipboard.ContainsText())

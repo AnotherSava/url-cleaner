@@ -58,6 +58,10 @@
       "stripPathSegments": "ref="
     },
     {
+      "suffix": ["airbnb.ca", "airbnb.ca"],
+      "additionalParams": ["location", "search_mode", "category_tag", "photo_id", "source_impression_id", "previous_page_section_name", "federated_search_id"]
+    },
+    {
       "suffix": "youtube.com",
       "enabled": true,
       "additionalParams": [],
