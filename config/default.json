@@ -67,6 +67,11 @@
       "enabled": true,
       "additionalParams": [],
       "excludedParams": ["pp"]
+    },
+    {
+      "suffix": "makerworld.com",
+      "stripSlugs": true,
+      "stripFragment": true
     }
   ]
 }

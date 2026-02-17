@@ -80,6 +80,24 @@ public static class UrlSanitizer
                 path = string.Join("/", keptSegments);
         }
 
+        // stripSlugs: remove SEO slug text from "{id}-{slug}" segments
+        if (rule is { StripSlugs: true })
+        {
+            var segments = path.Split('/');
+            for (var i = 0; i < segments.Length; i++)
+            {
+                var seg = segments[i];
+                var hyphen = seg.IndexOf('-');
+                if (hyphen > 0 && seg[..hyphen].All(char.IsAsciiDigit))
+                {
+                    segments[i] = seg[..hyphen];
+                    pathChanged = true;
+                }
+            }
+            if (pathChanged)
+                path = string.Join("/", segments);
+        }
+
         // --- Query cleaning ---
         var query = uri.Query;
         var hasQuery = !string.IsNullOrEmpty(query) && query != "?";
@@ -135,7 +153,16 @@ public static class UrlSanitizer
             cleanedQuery = kept.Count > 0 ? "?" + string.Join("&", kept) : "";
         }
 
-        if (!pathChanged && !queryChanged)
+        // --- Fragment cleaning ---
+        var fragment = uri.Fragment; // "" or "#..."
+        var fragmentChanged = false;
+        if (rule is { StripFragment: true } && fragment.Length > 0)
+        {
+            fragment = "";
+            fragmentChanged = true;
+        }
+
+        if (!pathChanged && !queryChanged && !fragmentChanged)
             return null;
 
         // Rebuild URL: scheme + authority + cleaned path + cleaned query + fragment
@@ -144,7 +171,6 @@ public static class UrlSanitizer
         var authorityEnd = text.IndexOfAny(['/', '?', '#'], afterScheme);
         if (authorityEnd < 0) authorityEnd = text.Length;
         var baseUrl = text[..authorityEnd];
-        var fragment = uri.Fragment; // "" or "#..."
 
         // If the original URL had no explicit path slash, don't inject one
         if (authorityEnd >= text.Length || text[authorityEnd] != '/')

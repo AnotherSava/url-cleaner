@@ -128,6 +128,17 @@ public class SiteRule
     /// </summary>
     [JsonConverter(typeof(StringOrListConverter))]
     public List<string> StripPathSegments { get; init; } = [];
+
+    /// <summary>
+    /// When true, strip SEO slug text from path segments that start with digits
+    /// followed by a hyphen (e.g. "2409726-some-slug" → "2409726").
+    /// </summary>
+    public bool StripSlugs { get; init; }
+
+    /// <summary>
+    /// When true, strip the URL fragment (#...).
+    /// </summary>
+    public bool StripFragment { get; init; }
 }
 
 /// <summary>
