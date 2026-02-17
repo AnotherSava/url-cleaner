@@ -116,6 +116,13 @@ public class SiteRule
     public bool StripAllParams { get; init; }
 
     /// <summary>
+    /// Keep the path starting from the first occurrence of any listed segment,
+    /// discarding the SEO slug before it. Accepts a string or array in JSON.
+    /// </summary>
+    [JsonConverter(typeof(StringOrListConverter))]
+    public List<string> KeepPathFrom { get; init; } = [];
+
+    /// <summary>
     /// Path segment prefixes to remove. A segment like "ref=sr_1_8" is removed
     /// if any prefix (e.g. "ref=") matches. Accepts a string or array in JSON.
     /// </summary>

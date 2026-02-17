@@ -54,6 +54,7 @@
     {
       "suffix": ["amazon.com", "amazon.ca", "amazon.co.uk"],
       "enabled": true,
+      "keepPathFrom": ["dp", "gp"],
       "stripAllParams": true,
       "stripPathSegments": "ref="
     },

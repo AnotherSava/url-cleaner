@@ -161,7 +161,148 @@ public class UrlSanitizerTests
             UrlSanitizer.TryClean("https://amazon.com/dp/B123?tag=abc&variant=blue", config));
     }
 
-    // ── 8. StripPathSegments removes matching segments ───────────────
+    // ── 8. KeepPathFrom trims path before anchor ────────────────────
+
+    [Fact]
+    public void KeepPathFrom_TrimsBeforeAnchor()
+    {
+        var config = new AppConfig
+        {
+            SiteRules =
+            [
+                new SiteRule
+                {
+                    Suffix = ["amazon.com"],
+                    KeepPathFrom = ["dp"]
+                }
+            ]
+        };
+        Assert.Equal(
+            "https://amazon.com/dp/B0DPKB2ZMF",
+            UrlSanitizer.TryClean("https://amazon.com/Enchanti-Removable-Magnetic/dp/B0DPKB2ZMF", config));
+    }
+
+    [Fact]
+    public void KeepPathFrom_WorksWithGp()
+    {
+        var config = new AppConfig
+        {
+            SiteRules =
+            [
+                new SiteRule
+                {
+                    Suffix = ["amazon.com"],
+                    KeepPathFrom = ["dp", "gp"]
+                }
+            ]
+        };
+        Assert.Equal(
+            "https://amazon.com/gp/product/B0DPKB2ZMF",
+            UrlSanitizer.TryClean("https://amazon.com/Some-Name/gp/product/B0DPKB2ZMF", config));
+    }
+
+    [Fact]
+    public void KeepPathFrom_NoMatch_LeavesPathUnchanged()
+    {
+        var config = new AppConfig
+        {
+            TrackingParams = [new TrackingParamGroup { Params = ["utm_source"] }],
+            SiteRules =
+            [
+                new SiteRule
+                {
+                    Suffix = ["example.com"],
+                    KeepPathFrom = ["dp"]
+                }
+            ]
+        };
+        Assert.Equal(
+            "https://example.com/page/stuff",
+            UrlSanitizer.TryClean("https://example.com/page/stuff?utm_source=x", config));
+    }
+
+    [Fact]
+    public void KeepPathFrom_AnchorAlreadyFirst()
+    {
+        var config = new AppConfig
+        {
+            TrackingParams = [new TrackingParamGroup { Params = ["utm_source"] }],
+            SiteRules =
+            [
+                new SiteRule
+                {
+                    Suffix = ["amazon.com"],
+                    KeepPathFrom = ["dp"]
+                }
+            ]
+        };
+        // keepPathFrom shouldn't change the path, but utm_source is still stripped
+        Assert.Equal(
+            "https://amazon.com/dp/B123",
+            UrlSanitizer.TryClean("https://amazon.com/dp/B123?utm_source=x", config));
+    }
+
+    [Fact]
+    public void KeepPathFrom_ComposesWithStripPathSegments()
+    {
+        var config = new AppConfig
+        {
+            SiteRules =
+            [
+                new SiteRule
+                {
+                    Suffix = ["amazon.com"],
+                    KeepPathFrom = ["dp"],
+                    StripPathSegments = ["ref="]
+                }
+            ]
+        };
+        Assert.Equal(
+            "https://amazon.com/dp/B123",
+            UrlSanitizer.TryClean("https://amazon.com/Slug-Name/dp/B123/ref=sr_1_8", config));
+    }
+
+    [Fact]
+    public void KeepPathFrom_FullAmazonCleaning()
+    {
+        var config = new AppConfig
+        {
+            SiteRules =
+            [
+                new SiteRule
+                {
+                    Suffix = ["amazon.com"],
+                    KeepPathFrom = ["dp"],
+                    StripAllParams = true,
+                    StripPathSegments = ["ref="]
+                }
+            ]
+        };
+        Assert.Equal(
+            "https://amazon.com/dp/B0DPKB2ZMF",
+            UrlSanitizer.TryClean("https://amazon.com/Enchanti-Removable-Magnetic/dp/B0DPKB2ZMF/ref=sr_1_8?tag=abc&camp=123", config));
+    }
+
+    [Fact]
+    public void KeepPathFrom_EarliestAnchorWins()
+    {
+        var config = new AppConfig
+        {
+            SiteRules =
+            [
+                new SiteRule
+                {
+                    Suffix = ["amazon.com"],
+                    KeepPathFrom = ["dp", "gp"]
+                }
+            ]
+        };
+        Assert.Equal(
+            "https://amazon.com/gp/foo/dp/B123",
+            UrlSanitizer.TryClean("https://amazon.com/slug/gp/foo/dp/B123", config));
+    }
+
+    // ── 9. StripPathSegments removes matching segments ───────────────
 
     [Fact]
     public void StripPathSegments_RemovesMatchingSegments()

@@ -37,6 +37,32 @@ public static class UrlSanitizer
 
         // --- Path cleaning ---
         var path = uri.AbsolutePath;
+
+        // keepPathFrom: discard segments before the anchor
+        if (rule is { KeepPathFrom.Count: > 0 })
+        {
+            var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            var anchorIndex = -1;
+            foreach (var anchor in rule.KeepPathFrom)
+            {
+                for (var i = 0; i < segments.Length; i++)
+                {
+                    if (segments[i].Equals(anchor, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (anchorIndex < 0 || i < anchorIndex)
+                            anchorIndex = i;
+                        break;
+                    }
+                }
+            }
+
+            if (anchorIndex > 0)
+            {
+                path = "/" + string.Join("/", segments[anchorIndex..]);
+                pathChanged = true;
+            }
+        }
+
         if (rule is { StripPathSegments.Count: > 0 })
         {
             var segments = path.Split('/');

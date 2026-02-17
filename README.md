@@ -45,6 +45,7 @@ On first run, a `config.json` file is created next to the executable with sensib
 {
   "suffix": ["amazon.com", "amazon.ca", "amazon.co.uk"],
   "enabled": true,
+  "keepPathFrom": ["dp", "gp"],
   "stripAllParams": true,
   "stripPathSegments": "ref="
 }
@@ -54,6 +55,7 @@ Site rules support:
 - `stripAllParams` — remove all query params (keep only those in `excludedParams`)
 - `additionalParams` — extra params to strip for this site
 - `excludedParams` — params to keep even if they're in the global list
+- `keepPathFrom` — keep path starting from this segment, discarding the SEO slug before it
 - `stripPathSegments` — remove path segments matching these prefixes
 
 ## Code signing policy
