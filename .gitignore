@@ -7,7 +7,8 @@ publish/
 .idea/
 
 # Claude Code
-.claude/
+.claude/settings.local.json
+.claude/skills/*/config
 
 # Runtime config (generated on first run)
 config.json
