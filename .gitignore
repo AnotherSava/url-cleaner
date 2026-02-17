@@ -8,7 +8,9 @@ publish/
 
 # Claude Code
 .claude/settings.local.json
-.claude/skills/*/config
 
 # Runtime config (generated on first run)
 config.json
+
+# Local deploy config (machine-specific install path)
+config/deploy.env
