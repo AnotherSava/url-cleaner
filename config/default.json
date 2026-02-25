@@ -11,6 +11,10 @@
       ]
     },
     {
+      "comment": "Urchin Tracking Module",
+      "params": ["utm_source", "utm_medium", "utm_campaign"]
+    },
+    {
       "comment": "Social",
       "params": ["fbclid", "igshid", "twclid", "ttclid", "ScCid", "li_fat_id"]
     },
@@ -53,10 +57,13 @@
   "siteRules": [
     {
       "suffix": ["amazon.com", "amazon.ca", "amazon.co.uk"],
-      "enabled": true,
       "keepPathFrom": ["dp", "gp"],
       "stripAllParams": true,
       "stripPathSegments": "ref="
+    },
+    {
+      "suffix": ["staples.com", "staples.ca"],
+      "stripAllParams": true
     },
     {
       "suffix": ["airbnb.ca", "airbnb.ca"],
@@ -64,7 +71,6 @@
     },
     {
       "suffix": "youtube.com",
-      "enabled": true,
       "additionalParams": [],
       "excludedParams": ["pp"]
     },
