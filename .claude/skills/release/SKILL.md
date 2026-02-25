@@ -40,6 +40,13 @@ git rev-list origin/main..HEAD --count   # must be 0
 
 Write release notes following the structure of previous releases. Use the commit list from step 2 to draft:
 
+Start the notes with this SmartScreen warning (verbatim):
+
+```
+> [!NOTE]
+> The executable is not code-signed yet, so Windows SmartScreen may show a warning on first run. Click **More info** → **Run anyway** to proceed. See [Code signing policy](https://github.com/AnotherSava/url-cleaner#code-signing-policy) in the README.
+```
+
 ### What's new
 - Base each bullet on the actual commit message — do NOT rephrase or reinterpret
 - Strip the conventional-commit prefix (feat:, fix:, etc.) and capitalize the first letter
