@@ -142,12 +142,11 @@ After: &ensp;`https://amazon.com/dp/B0DPKB2ZMF`
 
 ## Code signing policy
 
-Another URL Cleaner is signed with free code signing provided by [SignPath.io](https://signpath.io), certificate by [SignPath Foundation](https://signpath.org).
+This project has applied for free code signing through [SignPath Foundation](https://signpath.org), but does not yet meet the community adoption requirements. Until then, Windows will show a SmartScreen warning when you run the executable.
 
-**Team roles:**
-- Author, reviewer, and approver: [AnotherSava](https://github.com/AnotherSava)
+**You can help!** Star the repo, fork it, or contribute — growing the community brings us closer to getting a trusted code signing certificate.
 
-**Privacy:** This program will not transfer any information to other networked systems unless specifically requested by the user or the person installing or operating it.
+**Privacy:** This program will not transfer any information to other networked systems.
 
 ## License
 
