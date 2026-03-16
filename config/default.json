@@ -16,7 +16,7 @@
     },
     {
       "comment": "Social",
-      "params": ["fbclid", "igshid", "twclid", "ttclid", "ScCid", "li_fat_id"]
+      "params": ["fbclid", "__cft__[0]", "__tn__", "igshid", "twclid", "ttclid", "ScCid", "li_fat_id"]
     },
     {
       "comment": "Microsoft",
@@ -56,28 +56,37 @@
   ],
   "siteRules": [
     {
+      "suffix": ["airbnb.ca", "airbnb.ca"],
+      "additionalParams": ["location", "search_mode", "category_tag", "photo_id", "source_impression_id", "previous_page_section_name", "federated_search_id"]
+    },
+    {
       "suffix": ["amazon.com", "amazon.ca", "amazon.co.uk"],
       "keepPathFrom": ["dp", "gp"],
       "stripAllParams": true,
       "stripPathSegments": "ref="
     },
     {
-      "suffix": ["staples.com", "staples.ca"],
-      "stripAllParams": true
+      "suffix": "canadiantire.ca",
+      "additionalParams": ["rq"]
     },
     {
-      "suffix": ["airbnb.ca", "airbnb.ca"],
-      "additionalParams": ["location", "search_mode", "category_tag", "photo_id", "source_impression_id", "previous_page_section_name", "federated_search_id"]
-    },
-    {
-      "suffix": "youtube.com",
-      "additionalParams": [],
-      "excludedParams": ["pp"]
+      "suffix": "docs.google.com",
+      "stripAllParams": true,
+      "stripFragment": true
     },
     {
       "suffix": "makerworld.com",
       "stripSlugs": true,
       "stripFragment": true
+    },
+    {
+      "suffix": ["staples.com", "staples.ca"],
+      "stripAllParams": true
+    },
+    {
+      "suffix": "youtube.com",
+      "additionalParams": [],
+      "excludedParams": ["pp"]
     }
   ]
 }
