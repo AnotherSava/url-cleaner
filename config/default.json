@@ -76,6 +76,7 @@
     },
     {
       "suffix": "makerworld.com",
+      "additionalParams": ["from"],
       "stripSlugs": true,
       "stripFragment": true
     },
