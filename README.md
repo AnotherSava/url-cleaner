@@ -13,6 +13,7 @@ Another URL Cleaner runs in the system tray and monitors your clipboard. When yo
 - **Configurable** via `config.json` (auto-generated on first run)
 - **Pause cleaning** from the tray menu — temporarily disables URL cleaning without exiting
 - **Open config location** from the tray menu — opens Explorer with the config file selected
+- **Convert paths** — optionally converts Windows-style backslash paths (`C:\Users\foo`) to forward-slash paths (`C:/Users/foo`), toggled from the tray menu (disabled by default)
 - **Start with Windows** option in the tray menu
 
 ## Building from source
@@ -29,6 +30,10 @@ The built executable will be in `src/bin/Debug/net10.0-windows/`.
 ## Configuration
 
 On first run, a `config.json` file is created next to the executable with sensible defaults. Changes to the config file are picked up automatically — no restart needed.
+
+### Convert paths
+
+`convertPaths` (default: `false`) — when enabled, clipboard text that looks like a single Windows path (drive-letter or relative, but not UNC paths) is automatically converted to use forward slashes. Toggle this from the tray menu or set it directly in `config.json`.
 
 ### Tracking parameters
 

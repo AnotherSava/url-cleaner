@@ -79,6 +79,9 @@ public class ClipboardMonitor : NativeWindow, IDisposable
             var text = Clipboard.GetText();
             var cleaned = UrlSanitizer.TryClean(text, _config);
 
+            if (cleaned == null && _config.ConvertPaths)
+                cleaned = PathConverter.TryConvert(text);
+
             if (cleaned == null)
                 return;
 

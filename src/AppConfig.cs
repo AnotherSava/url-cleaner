@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using Microsoft.Win32;
 
@@ -7,6 +8,7 @@ namespace UrlCleaner;
 public class AppConfig
 {
     public bool TrimUrl { get; init; } = true;
+    public bool ConvertPaths { get; init; }
     public List<TrackingParamGroup> TrackingParams { get; init; } = [];
     public List<SiteRule> SiteRules { get; init; } = [];
 
@@ -47,6 +49,48 @@ public class AppConfig
             key.DeleteValue(AppName, throwOnMissingValue: false);
         }
     }
+
+    /// <summary>
+    /// Updates a single property in the config file (read-modify-write).
+    /// </summary>
+    public static bool UpdateConfigValue(string propertyName, object value)
+    {
+        try
+        {
+            var path = ConfigFilePath;
+            JsonObject root;
+            if (File.Exists(path))
+            {
+                var json = File.ReadAllText(path);
+                root = JsonNode.Parse(json) as JsonObject
+                    ?? JsonNode.Parse(JsonSerializer.Serialize(CreateDefault(), JsonOptions)) as JsonObject
+                    ?? new JsonObject();
+            }
+            else
+            {
+                // Start from the full default config so we never write a file
+                // that is missing trackingParams / siteRules / etc.
+                var defaultJson = JsonSerializer.Serialize(CreateDefault(), JsonOptions);
+                root = JsonNode.Parse(defaultJson) as JsonObject ?? new JsonObject();
+            }
+
+            root[propertyName] = JsonValue.Create(value);
+            File.WriteAllText(path, root.ToJsonString(WriteJsonOptions));
+            return true;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException)
+        {
+            // File may be locked or corrupted — log and continue rather than crash the UI thread.
+            System.Diagnostics.Debug.WriteLine($"Failed to update config: {ex.Message}");
+            return false;
+        }
+    }
+
+    private static readonly JsonSerializerOptions WriteJsonOptions = new()
+    {
+        WriteIndented = true,
+        TypeInfoResolver = new System.Text.Json.Serialization.Metadata.DefaultJsonTypeInfoResolver()
+    };
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {

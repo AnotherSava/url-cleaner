@@ -32,8 +32,16 @@ public class TrayApplicationContext : ApplicationContext
         };
         autoStartItem.CheckedChanged += OnAutoStartChanged;
 
+        var convertPathsItem = new ToolStripMenuItem("Convert Paths")
+        {
+            Checked = config.ConvertPaths,
+            CheckOnClick = true
+        };
+        convertPathsItem.CheckedChanged += OnConvertPathsChanged;
+
         var contextMenu = new ContextMenuStrip();
         contextMenu.Items.Add(pauseItem);
+        contextMenu.Items.Add(convertPathsItem);
         contextMenu.Items.Add(autoStartItem);
         contextMenu.Items.Add("Open Config Location", null, OnOpenConfigLocation);
         contextMenu.Items.Add(new ToolStripSeparator());
@@ -58,6 +66,22 @@ public class TrayApplicationContext : ApplicationContext
         {
             _clipboardMonitor.Paused = item.Checked;
             _trayIcon.Icon = item.Checked ? _pausedIcon : _activeIcon;
+        }
+    }
+
+    private static bool _updatingConvertPaths;
+
+    private static void OnConvertPathsChanged(object? sender, EventArgs e)
+    {
+        if (_updatingConvertPaths) return;
+        if (sender is ToolStripMenuItem item)
+        {
+            if (!AppConfig.UpdateConfigValue("convertPaths", item.Checked))
+            {
+                _updatingConvertPaths = true;
+                item.Checked = !item.Checked; // revert on failure
+                _updatingConvertPaths = false;
+            }
         }
     }
 
