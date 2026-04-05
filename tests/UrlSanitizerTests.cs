@@ -29,7 +29,8 @@ public class UrlSanitizerTests
         string[]? keepPathFrom = null,
         string[]? stripPathSegments = null,
         bool stripSlugs = false,
-        bool stripFragment = false) => new()
+        bool stripFragment = false,
+        int[]? stripPathIndex = null) => new()
     {
         TrackingParams = trackingParams != null
             ? [new TrackingParamGroup { Params = [..trackingParams] }]
@@ -46,7 +47,8 @@ public class UrlSanitizerTests
                 KeepPathFrom = keepPathFrom != null ? [..keepPathFrom] : [],
                 StripPathSegments = stripPathSegments != null ? [..stripPathSegments] : [],
                 StripSlugs = stripSlugs,
-                StripFragment = stripFragment
+                StripFragment = stripFragment,
+                StripPathIndex = stripPathIndex != null ? [..stripPathIndex] : []
             }
         ]
     };
@@ -251,7 +253,37 @@ public class UrlSanitizerTests
         AssertClean("https://example.com/prefix/models/2409726-slug", "https://example.com/models/2409726", config);
     }
 
-    // ── 14. StripFragment removes URL fragment ────────────────────────
+    // ── 14. StripPathIndex removes segments by index ──────────────────
+
+    [Fact]
+    public void StripPathIndex_CostcoFullUrl()
+    {
+        var config = RuleConfig("costco.ca", stripAllParams: true, stripPathIndex: [2]);
+        AssertClean("https://www.costco.ca/p/-/drano-max-gel-ultra-clog-remover-and-cleaner-38-l/4000299661?storeId=10302&partNumber=4000299661&langId=-24&catalogId=11201", "https://www.costco.ca/p/-/4000299661", config);
+    }
+
+    [Theory]
+    [InlineData("https://example.com/a/b/c/d", "https://example.com/a/c/d")]
+    public void StripPathIndex_RemovesSingleIndex(string input, string expected)
+    {
+        AssertClean(input, expected, RuleConfig("example.com", stripPathIndex: [1]));
+    }
+
+    [Fact]
+    public void StripPathIndex_RemovesMultipleIndices()
+    {
+        var config = RuleConfig("example.com", stripPathIndex: [1, 3]);
+        AssertClean("https://example.com/a/b/c/d", "https://example.com/a/c", config);
+    }
+
+    [Fact]
+    public void StripPathIndex_OutOfRange_Ignored()
+    {
+        var config = RuleConfig("example.com", stripPathIndex: [99]);
+        AssertClean("https://example.com/a/b?utm_source=x", null, config);
+    }
+
+    // ── 15. StripFragment removes URL fragment ────────────────────────
 
     [Theory]
     [InlineData("https://example.com/page#section", "https://example.com/page")]
@@ -272,5 +304,14 @@ public class UrlSanitizerTests
     public void StripFragment_FragmentOnlyChange()
     {
         AssertClean("https://site.com/page#track", "https://site.com/page", RuleConfig("site.com", stripFragment: true));
+    }
+
+    // ── 16. Integration: default.json deserialization ─────────────────
+
+    [Fact]
+    public void DefaultConfig_CostcoStripPathIndex()
+    {
+        var config = AppConfig.Load(Path.GetFullPath("../../../../config/default.json"));
+        AssertClean("https://www.costco.ca/p/-/drano-max-gel-ultra-clog-remover-and-cleaner-38-l/4000299661?storeId=10302&partNumber=4000299661&langId=-24&catalogId=11201", "https://www.costco.ca/p/-/4000299661", config);
     }
 }

@@ -98,6 +98,23 @@ public static class UrlSanitizer
                 path = string.Join("/", segments);
         }
 
+        // stripPathIndex: remove path segments at specific zero-based indices
+        if (rule is { StripPathIndex.Count: > 0 })
+        {
+            var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            var indicesToStrip = new HashSet<int>(rule.StripPathIndex);
+            var keptSegments = new List<string>(segments.Length);
+            for (var i = 0; i < segments.Length; i++)
+            {
+                if (indicesToStrip.Contains(i))
+                    pathChanged = true;
+                else
+                    keptSegments.Add(segments[i]);
+            }
+            if (pathChanged)
+                path = "/" + string.Join("/", keptSegments);
+        }
+
         // --- Query cleaning ---
         var query = uri.Query;
         var hasQuery = !string.IsNullOrEmpty(query) && query != "?";

@@ -6,6 +6,12 @@ A Windows background app that automatically strips tracking parameters from URLs
 
 Another URL Cleaner runs in the system tray and monitors your clipboard. When you copy a URL, it instantly removes tracking parameters and replaces the clipboard contents with the cleaned URL — no manual steps needed.
 
+### Avoiding double-processing
+
+When the app replaces the clipboard with a cleaned URL, Windows fires another clipboard-change notification. If the cleaned URL is itself cleanable (e.g. `stripPathIndex` shifts segment indices after removal), a naive listener would re-clean it and corrupt the result.
+
+To prevent this, the app remembers the last cleaned result. When a clipboard-change notification arrives and the clipboard text matches the last output, processing is skipped entirely. This is simpler and more robust than timing-based flags, which are vulnerable to race conditions between `Clipboard.SetText` returning and the `WM_CLIPBOARDUPDATE` message being dispatched.
+
 ## Features
 
 - **60+ tracking parameters** stripped by default (Google Analytics, Facebook, HubSpot, Mailchimp, and more)
@@ -117,6 +123,17 @@ After: &ensp;`https://amazon.com/dp/B123`
 Before: `https://makerworld.com/en/models/2409726-travel-power-adapter-storage-box`
 
 After: &ensp;`https://makerworld.com/en/models/2409726`
+
+---
+
+**`stripPathIndex`** — remove path segments at specific zero-based indices (accepts a single int or an array)
+
+```json
+{ "suffix": "costco.ca", "stripPathIndex": 2 }
+```
+Before: `https://www.costco.ca/p/-/drano-max-gel-ultra-clog-remover/4000299661`
+
+After: &ensp;`https://www.costco.ca/p/-/4000299661`
 
 ---
 

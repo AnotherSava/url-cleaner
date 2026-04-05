@@ -5,10 +5,24 @@
     {
       "comment": "Google / GA",
       "params": [
-        "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content",
-        "utm_id", "utm_source_platform", "utm_creative_format", "utm_marketing_tactic",
-        "gclid", "gclsrc", "dclid", "gbraid", "wbraid", "gad_source",
-        "_ga", "_gl", "srsltid"
+        "utm_source",
+        "utm_medium",
+        "utm_campaign",
+        "utm_term",
+        "utm_content",
+        "utm_id",
+        "utm_source_platform",
+        "utm_creative_format",
+        "utm_marketing_tactic",
+        "gclid",
+        "gclsrc",
+        "dclid",
+        "gbraid",
+        "wbraid",
+        "gad_source",
+        "_ga",
+        "_gl",
+        "srsltid"
       ]
     },
     {
@@ -17,7 +31,16 @@
     },
     {
       "comment": "Social",
-      "params": ["fbclid", "__cft__[0]", "__tn__", "igshid", "twclid", "ttclid", "ScCid", "li_fat_id"]
+      "params": [
+        "fbclid",
+        "__cft__[0]",
+        "__tn__",
+        "igshid",
+        "twclid",
+        "ttclid",
+        "ScCid",
+        "li_fat_id"
+      ]
     },
     {
       "comment": "Microsoft",
@@ -38,17 +61,40 @@
     {
       "comment": "HubSpot",
       "params": [
-        "hsa_acc", "hsa_cam", "hsa_grp", "hsa_ad", "hsa_src",
-        "hsa_tgt", "hsa_kw", "hsa_mt", "hsa_net", "hsa_ver"
+        "hsa_acc",
+        "hsa_cam",
+        "hsa_grp",
+        "hsa_ad",
+        "hsa_src",
+        "hsa_tgt",
+        "hsa_kw",
+        "hsa_mt",
+        "hsa_net",
+        "hsa_ver"
       ]
     },
     {
       "comment": "Matomo",
-      "params": ["mtm_campaign", "mtm_source", "mtm_medium", "mtm_keyword", "mtm_cid", "mtm_content"]
+      "params": [
+        "mtm_campaign",
+        "mtm_source",
+        "mtm_medium",
+        "mtm_keyword",
+        "mtm_cid",
+        "mtm_content"
+      ]
     },
     {
       "comment": "Piwik",
-      "params": ["pk_campaign", "pk_kwd", "pk_keyword", "pk_source", "pk_medium", "pk_content", "pk_cid"]
+      "params": [
+        "pk_campaign",
+        "pk_kwd",
+        "pk_keyword",
+        "pk_source",
+        "pk_medium",
+        "pk_content",
+        "pk_cid"
+      ]
     },
     {
       "comment": "Other",
@@ -58,7 +104,15 @@
   "siteRules": [
     {
       "suffix": ["airbnb.ca", "airbnb.ca"],
-      "additionalParams": ["location", "search_mode", "category_tag", "photo_id", "source_impression_id", "previous_page_section_name", "federated_search_id"]
+      "additionalParams": [
+        "location",
+        "search_mode",
+        "category_tag",
+        "photo_id",
+        "source_impression_id",
+        "previous_page_section_name",
+        "federated_search_id"
+      ]
     },
     {
       "suffix": ["amazon.com", "amazon.ca", "amazon.co.uk"],
@@ -83,6 +137,15 @@
     },
     {
       "suffix": ["staples.com", "staples.ca"],
+      "stripAllParams": true
+    },
+    {
+      "suffix": ["reddit.com"],
+      "stripAllParams": true
+    },
+    {
+      "suffix": ["costco.ca"],
+      "stripPathIndex": 2,
       "stripAllParams": true
     },
     {

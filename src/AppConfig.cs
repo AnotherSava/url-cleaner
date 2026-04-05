@@ -180,9 +180,46 @@ public class SiteRule
     public bool StripSlugs { get; init; }
 
     /// <summary>
+    /// Zero-based path segment indices to remove. Accepts a single int or array in JSON.
+    /// </summary>
+    [JsonConverter(typeof(IntOrListConverter))]
+    public List<int> StripPathIndex { get; init; } = [];
+
+    /// <summary>
     /// When true, strip the URL fragment (#...).
     /// </summary>
     public bool StripFragment { get; init; }
+}
+
+/// <summary>
+/// Reads a JSON value that is either a single int or an array of ints
+/// into a List&lt;int&gt;. Always writes back as an array.
+/// </summary>
+public class IntOrListConverter : JsonConverter<List<int>>
+{
+    public override List<int> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        if (reader.TokenType == JsonTokenType.Number)
+            return [reader.GetInt32()];
+
+        if (reader.TokenType == JsonTokenType.StartArray)
+        {
+            var list = new List<int>();
+            while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
+                list.Add(reader.GetInt32());
+            return list;
+        }
+
+        throw new JsonException("Expected int or array for StripPathIndex");
+    }
+
+    public override void Write(Utf8JsonWriter writer, List<int> value, JsonSerializerOptions options)
+    {
+        writer.WriteStartArray();
+        foreach (var item in value)
+            writer.WriteNumberValue(item);
+        writer.WriteEndArray();
+    }
 }
 
 /// <summary>

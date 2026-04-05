@@ -20,7 +20,7 @@ public class ClipboardMonitor : NativeWindow, IDisposable
     private AppConfig _config;
     private readonly string _configFilePath;
     private DateTime _configLastModified;
-    private bool _isUpdatingClipboard;
+    private string? _lastCleanedResult;
     private bool _disposed;
 
     public bool Paused { get; set; }
@@ -41,7 +41,7 @@ public class ClipboardMonitor : NativeWindow, IDisposable
 
     protected override void WndProc(ref Message m)
     {
-        if (m.Msg == WM_CLIPBOARDUPDATE && !_isUpdatingClipboard)
+        if (m.Msg == WM_CLIPBOARDUPDATE)
             OnClipboardChanged();
 
         base.WndProc(ref m);
@@ -77,6 +77,9 @@ public class ClipboardMonitor : NativeWindow, IDisposable
                 return;
 
             var text = Clipboard.GetText();
+            if (text == _lastCleanedResult)
+                return;
+
             var cleaned = UrlSanitizer.TryClean(text, _config);
 
             if (cleaned == null && _config.ConvertPaths)
@@ -85,17 +88,8 @@ public class ClipboardMonitor : NativeWindow, IDisposable
             if (cleaned == null)
                 return;
 
-            // Set the flag BEFORE writing to the clipboard so our own
-            // WM_CLIPBOARDUPDATE message gets ignored (prevents infinite loop).
-            _isUpdatingClipboard = true;
-            try
-            {
-                Clipboard.SetText(cleaned);
-            }
-            finally
-            {
-                _isUpdatingClipboard = false;
-            }
+            _lastCleanedResult = cleaned;
+            Clipboard.SetText(cleaned);
         }
         catch (ExternalException)
         {
