@@ -16,3 +16,6 @@ config.json
 
 # Local deploy config (machine-specific install path)
 config/deploy.env
+
+# Local convenience scripts (not committed)
+scripts/
