@@ -1,0 +1,4 @@
+title: Another URL Cleaner
+description: A Windows background app that automatically strips tracking parameters from URLs on the clipboard
+theme: jekyll-theme-hacker
+baseurl: /url-cleaner

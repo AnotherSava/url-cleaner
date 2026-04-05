@@ -1,4 +1,11 @@
-# Another URL Cleaner
+---
+layout: default
+title: Another URL Cleaner
+---
+
+[Home](.) | [Configuration](pages/configuration) | [Architecture](pages/architecture) | [Development](pages/development)
+
+---
 
 A Windows background app that automatically strips tracking parameters from URLs on the clipboard.
 
@@ -23,13 +30,12 @@ Download the latest release from [GitHub Releases](https://github.com/AnotherSav
 | **Self-contained** | None — single exe, just unzip and run |
 | **Framework-dependent** | [.NET Desktop Runtime 10](https://dotnet.microsoft.com/download/dotnet/10.0) |
 
----
+## Usage
 
-See full project documentation at **[anothersava.github.io/url-cleaner](https://anothersava.github.io/url-cleaner/)**:
-
-- [Configuration](https://anothersava.github.io/url-cleaner/pages/configuration) — tracking parameters, site rules, all available options
-- [Architecture](https://anothersava.github.io/url-cleaner/pages/architecture) — how the clipboard monitoring and URL cleaning work
-- [Development](https://anothersava.github.io/url-cleaner/pages/development) — building from source, project structure
+1. Download and unzip a release package
+2. Run `UrlCleaner.exe` — an icon appears in the system tray
+3. Copy any URL — tracking parameters are automatically stripped
+4. Right-click the tray icon for options: pause cleaning, open config, start with Windows
 
 ## Code signing policy
 
@@ -38,7 +44,3 @@ This project has applied for free code signing through [SignPath Foundation](htt
 **You can help!** Star the repo, fork it, or contribute — growing the community brings us closer to getting a trusted code signing certificate.
 
 **Privacy:** This program will not transfer any information to other networked systems.
-
-## License
-
-[GPL-3.0](LICENSE)

@@ -6,8 +6,8 @@ publish/
 # Claude Code
 .claude/settings.local.json
 
-# Local docs
-docs/
+# Local docs (plans, drafts) — but allow GitHub Pages content through
+docs/plans/
 !docs/plans/completed/
 !docs/plans/draft/
 
