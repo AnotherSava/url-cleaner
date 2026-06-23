@@ -1,0 +1,58 @@
+# URL Cleaner — C# Rewrite
+
+## Decision
+- User chose **C# WinForms** rewrite (over improving Python or using Java)
+- Learning C# alongside building the tool
+- IDE: **JetBrains Rider**
+
+## Project Setup (completed)
+- .NET 10.0 SDK installed (v10.0.103)
+- License: **GPL v3**
+- `.gitignore` added (dotnet template)
+- Solution file: `url-cleaner.sln` at repo root
+
+## Repo Layout
+```
+/
+  url-cleaner.sln
+  LICENSE
+  config/
+    default.json          ← default config (embedded resource, grouped tracking params)
+  src/
+    UrlCleaner.csproj     ← targets net10.0-windows
+    Program.cs            ← entry point, runs TrayApplicationContext
+    TrayApplicationContext.cs ← system tray app (NotifyIcon, context menu)
+    AppConfig.cs          ← config model + JSON loader + autostart registry helpers
+    ClipboardMonitor.cs   ← Win32 clipboard listener (NativeWindow + P/Invoke)
+    UrlSanitizer.cs       ← URL cleaning logic (strip tracking params)
+```
+
+## Completed Features
+- System tray app (ApplicationContext pattern, NotifyIcon, `SystemIcons.Shield` placeholder)
+- Clipboard monitoring via `AddClipboardFormatListener` / `WM_CLIPBOARDUPDATE`
+- URL cleaning: strips tracking params, supports per-domain site rules
+- Config: `config.json` auto-generated on first run from embedded `default.json`
+- `trackingParams` in JSON uses grouped format: `{ comment, params[] }` for readability
+- `suffix` field in site rules accepts string or array (custom `StringOrListConverter`)
+- "Start with Windows" checkbox in tray menu (registry-only, no config field)
+- All config model properties use `init` accessors (immutable after deserialization)
+
+## Architecture Notes
+- `default.json` is an **embedded resource** (`LogicalName="UrlCleaner.default.json"`)
+- Autostart is registry-only (`HKCU\...\Run`) — not stored in config.json
+- URL query parsing is manual (not `HttpUtility`) to preserve original encoding
+- Infinite-loop prevention: `_isUpdatingClipboard` flag in `ClipboardMonitor`
+
+## Environment Notes
+- `dotnet` CLI path: `"/c/Program Files/dotnet/dotnet.exe"` (not on bash PATH, use full path)
+- Build: `"/c/Program Files/dotnet/dotnet.exe" build D:/projects/url-cleaner/src`
+
+## Original Context
+- Forked from [Confiqure/TracklessURL](https://github.com/Confiqure/TracklessURL) (Python, proof-of-concept quality)
+- Goal: Windows 11 background clipboard URL cleaner (system tray, event-driven)
+
+## User Preferences
+- Learning C# — explain concepts as we go
+- Prefers clean repo root (user-facing files only, source in `src/`)
+- Prefers config as external files over hardcoded defaults
+- Prefers simplicity — no over-engineering, flat structure until ~10+ files
