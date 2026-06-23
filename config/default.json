@@ -118,6 +118,7 @@
       "suffix": ["amazon.com", "amazon.ca", "amazon.co.uk"],
       "keepPathFrom": ["dp", "gp"],
       "stripAllParams": true,
+      "excludedParams": ["orderID"],
       "stripPathSegments": "ref="
     },
     {
@@ -134,6 +135,10 @@
       "additionalParams": ["from"],
       "stripSlugs": true,
       "stripFragment": true
+    },
+    {
+      "suffix": "notion.com",
+      "additionalParams": ["source"]
     },
     {
       "suffix": ["staples.com", "staples.ca"],
