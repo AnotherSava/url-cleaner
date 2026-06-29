@@ -43,6 +43,11 @@
 - URL query parsing is manual (not `HttpUtility`) to preserve original encoding
 - Infinite-loop prevention: `_isUpdatingClipboard` flag in `ClipboardMonitor`
 
+## Deployment
+- `deploy` runs `scripts/deploy.sh` → global deploy skill; installs to `INSTALL_DIR` from `config/deploy.env` (gitignored, machine-specific)
+- **Config layering**: `config/default.json` = prod default (embedded, shipped to all users on first run); `config/local.json` (gitignored) = personal override that deploy **copies wholesale over** the installed `config.json` — so it must be a COMPLETE config and will drift from `default.json` as tracking params/site rules change
+- Convert features ship OFF in prod, ON locally: `convertPaths` + `convertNumbers` are `false` in `default.json`, `true` in `local.json`
+
 ## Environment Notes
 - `dotnet` CLI path: `"/c/Program Files/dotnet/dotnet.exe"` (not on bash PATH, use full path)
 - Build: `"/c/Program Files/dotnet/dotnet.exe" build D:/projects/url-cleaner/src`
