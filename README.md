@@ -12,6 +12,7 @@ Another URL Cleaner runs in the system tray and monitors your clipboard. When yo
 - **Pause cleaning** from the tray menu — temporarily disables URL cleaning without exiting
 - **Open config location** from the tray menu — opens Explorer with the config file selected
 - **Convert paths** — optionally converts Windows backslash paths to forward slashes, toggled from the tray menu
+- **Convert numbers** — optionally strips thousands separators from a copied number (e.g. `10,871.69` → `10871.69`), toggled from the tray menu
 - **Start with Windows** option in the tray menu
 
 ## Download

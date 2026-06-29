@@ -41,6 +41,7 @@ dotnet test tests/
     ClipboardMonitor.cs       Win32 clipboard listener (NativeWindow)
     UrlSanitizer.cs           URL cleaning logic
     PathConverter.cs          backslash-to-forward-slash path conversion
+    NumberConverter.cs        strips thousands separators from copied numbers
   tests/
     UrlSanitizerTests.cs      URL cleaning tests
     PathConverterTests.cs     path conversion tests

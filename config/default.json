@@ -1,6 +1,7 @@
 {
   "trimUrl": true,
   "convertPaths": false,
+  "convertNumbers": false,
   "trackingParams": [
     {
       "comment": "Google / GA",

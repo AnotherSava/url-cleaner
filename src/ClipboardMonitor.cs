@@ -85,6 +85,9 @@ public class ClipboardMonitor : NativeWindow, IDisposable
             if (cleaned == null && _config.ConvertPaths)
                 cleaned = PathConverter.TryConvert(text);
 
+            if (cleaned == null && _config.ConvertNumbers)
+                cleaned = NumberConverter.TryConvert(text);
+
             if (cleaned == null)
                 return;
 

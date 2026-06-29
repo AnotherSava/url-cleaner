@@ -19,7 +19,7 @@ public class TrayApplicationContext : ApplicationContext
         _pausedIcon = CreateGrayscaleIcon(_activeIcon);
 
         // Build the right-click menu for the tray icon
-        var pauseItem = new ToolStripMenuItem("Pause Cleaning")
+        var pauseItem = new ToolStripMenuItem("Pause cleaning")
         {
             CheckOnClick = true
         };
@@ -32,18 +32,26 @@ public class TrayApplicationContext : ApplicationContext
         };
         autoStartItem.CheckedChanged += OnAutoStartChanged;
 
-        var convertPathsItem = new ToolStripMenuItem("Convert Paths")
+        var convertPathsItem = new ToolStripMenuItem("Convert paths")
         {
             Checked = config.ConvertPaths,
             CheckOnClick = true
         };
         convertPathsItem.CheckedChanged += OnConvertPathsChanged;
 
+        var convertNumbersItem = new ToolStripMenuItem("Convert numbers")
+        {
+            Checked = config.ConvertNumbers,
+            CheckOnClick = true
+        };
+        convertNumbersItem.CheckedChanged += OnConvertNumbersChanged;
+
         var contextMenu = new ContextMenuStrip();
         contextMenu.Items.Add(pauseItem);
         contextMenu.Items.Add(convertPathsItem);
+        contextMenu.Items.Add(convertNumbersItem);
         contextMenu.Items.Add(autoStartItem);
-        contextMenu.Items.Add("Open Config Location", null, OnOpenConfigLocation);
+        contextMenu.Items.Add("Open config location", null, OnOpenConfigLocation);
         contextMenu.Items.Add(new ToolStripSeparator());
         contextMenu.Items.Add("Exit", null, OnExit);
 
@@ -69,19 +77,21 @@ public class TrayApplicationContext : ApplicationContext
         }
     }
 
-    private static bool _updatingConvertPaths;
+    private static void OnConvertPathsChanged(object? sender, EventArgs e) => PersistFlag(sender, "convertPaths");
 
-    private static void OnConvertPathsChanged(object? sender, EventArgs e)
+    private static void OnConvertNumbersChanged(object? sender, EventArgs e) => PersistFlag(sender, "convertNumbers");
+
+    private static bool _suppressFlagPersist;
+
+    private static void PersistFlag(object? sender, string configKey)
     {
-        if (_updatingConvertPaths) return;
-        if (sender is ToolStripMenuItem item)
+        if (_suppressFlagPersist) return;
+        if (sender is not ToolStripMenuItem item) return;
+        if (!AppConfig.UpdateConfigValue(configKey, item.Checked))
         {
-            if (!AppConfig.UpdateConfigValue("convertPaths", item.Checked))
-            {
-                _updatingConvertPaths = true;
-                item.Checked = !item.Checked; // revert on failure
-                _updatingConvertPaths = false;
-            }
+            _suppressFlagPersist = true;
+            item.Checked = !item.Checked; // revert on failure
+            _suppressFlagPersist = false;
         }
     }
 

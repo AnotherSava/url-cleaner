@@ -9,6 +9,7 @@ public class AppConfig
 {
     public bool TrimUrl { get; init; } = true;
     public bool ConvertPaths { get; init; }
+    public bool ConvertNumbers { get; init; }
     public List<TrackingParamGroup> TrackingParams { get; init; } = [];
     public List<SiteRule> SiteRules { get; init; } = [];
 
