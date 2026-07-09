@@ -21,7 +21,11 @@ public class ClipboardMonitor : NativeWindow, IDisposable
     private readonly string _configFilePath;
     private DateTime _configLastModified;
     private string? _lastCleanedResult;
+    private readonly List<string> _history = [];
     private bool _disposed;
+
+    // How many recent distinct clipboard values to keep for placeholder filling.
+    private const int HistoryLimit = 10;
 
     public bool Paused { get; set; }
 
@@ -88,6 +92,24 @@ public class ClipboardMonitor : NativeWindow, IDisposable
             if (cleaned == null && _config.ConvertNumbers)
                 cleaned = NumberConverter.TryConvert(text);
 
+            // _history holds values copied before this change (most-recent first), so the
+            // template's own text is never one of its fill candidates.
+            var filledPlaceholder = false;
+            if (cleaned == null && _config.ConvertPlaceholders)
+            {
+                cleaned = PlaceholderConverter.TryConvert(text, _history);
+                filledPlaceholder = cleaned != null;
+            }
+
+            // Record the resulting clipboard content as a future fill candidate — but never a
+            // placeholder template, nor a value produced by placeholder filling. Either would
+            // let a template fill itself (yielding output that still contains the placeholder),
+            // especially since some apps emit several clipboard updates per copy and we would
+            // otherwise re-process our own output.
+            var result = cleaned ?? text;
+            if (!filledPlaceholder && !PlaceholderConverter.ContainsPlaceholder(result))
+                Remember(result);
+
             if (cleaned == null)
                 return;
 
@@ -98,6 +120,21 @@ public class ClipboardMonitor : NativeWindow, IDisposable
         {
             // Another process has the clipboard locked — nothing we can do, skip this event.
         }
+    }
+
+    /// <summary>
+    /// Pushes a clipboard value to the front of the history buffer (most-recent first),
+    /// de-duplicating so a repeated copy doesn't consume multiple slots.
+    /// </summary>
+    private void Remember(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return;
+
+        _history.Remove(value);
+        _history.Insert(0, value);
+        if (_history.Count > HistoryLimit)
+            _history.RemoveRange(HistoryLimit, _history.Count - HistoryLimit);
     }
 
     public void Dispose()

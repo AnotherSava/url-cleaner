@@ -25,6 +25,10 @@ On first run, a `config.json` file is created next to the executable with sensib
 
 `convertNumbers` (default: `false`) — when enabled, clipboard text that is entirely a number written with comma thousands separators (e.g. `10,871.69`) has the commas stripped (`10871.69`). Only whole-value numbers with properly grouped thousands are converted, so European decimals like `10,5` are left untouched. Toggle this from the tray menu or set it directly in `config.json`.
 
+## Convert placeholders
+
+`convertPlaceholders` (default: `false`) — when enabled, clipboard text containing `{{kebab-case}}` placeholders (e.g. `{{tvdb-api-key}}`) has each placeholder replaced with a recently copied clipboard value. Copy the value first, then copy the text containing the placeholder — a single placeholder takes the most recently copied value. When several distinct placeholders are present, they draw from the last few copied values in reading order: the value copied first fills the placeholder that appears first. The app remembers the last 10 distinct clipboard values in memory (cleared when it exits). Toggle this from the tray menu or set it directly in `config.json`.
+
 ## Tracking parameters
 
 `trackingParams` — groups of query parameter names to strip from all URLs:

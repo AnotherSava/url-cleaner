@@ -31,7 +31,7 @@ The app registers as a clipboard format listener using `AddClipboardFormatListen
 2. Check if clipboard contains text
 3. Skip if text matches the last cleaned result (see [Avoiding double-processing](#avoiding-double-processing))
 4. Pass text through `UrlSanitizer.TryClean`
-5. If no URL change, try `PathConverter.TryConvert` (if enabled), then `NumberConverter.TryConvert` (if enabled)
+5. If no URL change, try `PathConverter.TryConvert` (if enabled), then `NumberConverter.TryConvert` (if enabled), then `PlaceholderConverter.TryConvert` (if enabled)
 6. If a cleaned result is produced, store it and replace the clipboard
 
 ### Avoiding double-processing

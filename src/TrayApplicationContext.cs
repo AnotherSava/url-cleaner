@@ -46,10 +46,18 @@ public class TrayApplicationContext : ApplicationContext
         };
         convertNumbersItem.CheckedChanged += OnConvertNumbersChanged;
 
+        var convertPlaceholdersItem = new ToolStripMenuItem("Convert placeholders")
+        {
+            Checked = config.ConvertPlaceholders,
+            CheckOnClick = true
+        };
+        convertPlaceholdersItem.CheckedChanged += OnConvertPlaceholdersChanged;
+
         var contextMenu = new ContextMenuStrip();
         contextMenu.Items.Add(pauseItem);
         contextMenu.Items.Add(convertPathsItem);
         contextMenu.Items.Add(convertNumbersItem);
+        contextMenu.Items.Add(convertPlaceholdersItem);
         contextMenu.Items.Add(autoStartItem);
         contextMenu.Items.Add("Open config location", null, OnOpenConfigLocation);
         contextMenu.Items.Add(new ToolStripSeparator());
@@ -80,6 +88,8 @@ public class TrayApplicationContext : ApplicationContext
     private static void OnConvertPathsChanged(object? sender, EventArgs e) => PersistFlag(sender, "convertPaths");
 
     private static void OnConvertNumbersChanged(object? sender, EventArgs e) => PersistFlag(sender, "convertNumbers");
+
+    private static void OnConvertPlaceholdersChanged(object? sender, EventArgs e) => PersistFlag(sender, "convertPlaceholders");
 
     private static bool _suppressFlagPersist;
 

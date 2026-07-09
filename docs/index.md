@@ -20,6 +20,7 @@ Another URL Cleaner runs in the system tray and monitors your clipboard. When yo
 - **Open config location** from the tray menu — opens Explorer with the config file selected
 - **Convert paths** — optionally converts Windows backslash paths to forward slashes, toggled from the tray menu
 - **Convert numbers** — optionally strips thousands separators from a copied number (e.g. `10,871.69` → `10871.69`), toggled from the tray menu
+- **Convert placeholders** — optionally fills `{{kebab-case}}` placeholders (e.g. `{{tvdb-api-key}}`) with recently copied clipboard values, toggled from the tray menu
 - **Start with Windows** option in the tray menu
 
 ## Download
