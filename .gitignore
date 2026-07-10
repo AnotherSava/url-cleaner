@@ -19,6 +19,3 @@ config/deploy.env
 
 # Local deployment config override (replaces installed config.json on deploy)
 config/local.json
-
-# Local convenience scripts (not committed)
-scripts/
