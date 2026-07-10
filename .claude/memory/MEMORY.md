@@ -49,9 +49,13 @@
 - **Config layering**: `config/default.json` = prod default (embedded, shipped to all users on first run); `config/local.json` (gitignored) = personal override that deploy **copies wholesale over** the installed `config.json` — so it must be a COMPLETE config and will drift from `default.json` as tracking params/site rules change
 - Convert features ship OFF in prod, ON locally: `convertPaths` + `convertNumbers` + `convertPlaceholders` are `false` in `default.json`, `true` in `local.json`
 
+## CI Notes
+- Each push runs **two** workflows: the tracked `.github/workflows/build.yml`, and GitHub's built-in `dynamic/pages/pages-build-deployment` (auto-triggered because Pages serves `docs/`)
+- The Pages workflow is GitHub-managed — its internal `actions/checkout@v4` / `upload-artifact@v4` emit a Node.js 20 deprecation warning that **cannot** be fixed from the repo. A lingering Node 20 warning after bumping `build.yml`'s own action versions is expected, not actionable
+
 ## Environment Notes
 - `dotnet` CLI path: `"/c/Program Files/dotnet/dotnet.exe"` (not on bash PATH, use full path)
-- Build: `"/c/Program Files/dotnet/dotnet.exe" build D:/projects/url-cleaner/src`
+- Build: `"/c/Program Files/dotnet/dotnet.exe" build src` (run from the repo root)
 
 ## Original Context
 - Forked from [Confiqure/TracklessURL](https://github.com/Confiqure/TracklessURL) (Python, proof-of-concept quality)
