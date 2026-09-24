@@ -3,9 +3,6 @@ bin/
 obj/
 publish/
 
-# Claude Code
-.claude/settings.local.json
-
 # Local docs (plans, drafts) — but allow GitHub Pages content through
 docs/plans/
 !docs/plans/completed/
@@ -13,9 +10,6 @@ docs/plans/
 
 # Runtime config (generated on first run)
 config.json
-
-# Local deploy config (machine-specific install path)
-config/deploy.env
 
 # Local deployment config override (replaces installed config.json on deploy)
 config/local.json
