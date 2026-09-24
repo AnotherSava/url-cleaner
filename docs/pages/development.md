@@ -42,6 +42,7 @@ dotnet test tests/
     UrlSanitizer.cs           URL cleaning logic
     PathConverter.cs          backslash-to-forward-slash path conversion
     NumberConverter.cs        strips thousands separators from copied numbers
+    PlaceholderConverter.cs   fills placeholders from recent clipboard values
   tests/
     UrlSanitizerTests.cs      URL cleaning tests
     PathConverterTests.cs     path conversion tests

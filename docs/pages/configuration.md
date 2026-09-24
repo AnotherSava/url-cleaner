@@ -27,7 +27,7 @@ On first run, a `config.json` file is created next to the executable with sensib
 
 ## Convert placeholders
 
-`convertPlaceholders` (default: `false`) — when enabled, clipboard text containing `{{kebab-case}}` placeholders (e.g. `{{tvdb-api-key}}`) has each placeholder replaced with a recently copied clipboard value. Copy the value first, then copy the text containing the placeholder — a single placeholder takes the most recently copied value. When several distinct placeholders are present, they draw from the last few copied values in reading order: the value copied first fills the placeholder that appears first. The app remembers the last 10 distinct clipboard values in memory (cleared when it exits). Toggle this from the tray menu or set it directly in `config.json`.
+`convertPlaceholders` (default: `false`) — when enabled, clipboard text containing {% raw %}`{{kebab-case}}` placeholders (e.g. `{{tvdb-api-key}}`){% endraw %} has each placeholder replaced with a recently copied clipboard value. Copy the value first, then copy the text containing the placeholder — a single placeholder takes the most recently copied value. When several distinct placeholders are present, they draw from the last few copied values in reading order: the value copied first fills the placeholder that appears first. The app remembers the last 10 distinct clipboard values in memory (cleared when it exits). Toggle this from the tray menu or set it directly in `config.json`.
 
 ## Tracking parameters
 
