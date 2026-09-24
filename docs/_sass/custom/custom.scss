@@ -1,0 +1,7 @@
+// At the theme's size the sidebar title wraps to two lines and overflows the 60px header
+.site-title { @include fs-5; }
+
+// URL examples on the Configuration page: removed parts in red, kept parts in green
+.url-example { font-family: monospace; font-size: 0.9em; word-break: break-all; }
+.url-example del { color: #e74c3c; text-decoration: none; }
+.url-example ins { color: #2ecc71; text-decoration: none; }

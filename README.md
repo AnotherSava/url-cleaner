@@ -30,8 +30,8 @@ Download the latest release from [GitHub Releases](https://github.com/AnotherSav
 See full project documentation at **[anothersava.github.io/url-cleaner](https://anothersava.github.io/url-cleaner/)**:
 
 - [Configuration](https://anothersava.github.io/url-cleaner/pages/configuration) — tracking parameters, site rules, all available options
-- [Architecture](https://anothersava.github.io/url-cleaner/pages/architecture) — how the clipboard monitoring and URL cleaning work
 - [Development](https://anothersava.github.io/url-cleaner/pages/development) — building from source, project structure
+  - [Architecture](https://anothersava.github.io/url-cleaner/pages/development/architecture) — how the clipboard monitoring and URL cleaning work
 
 ## Code signing policy
 

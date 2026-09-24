@@ -1,16 +1,7 @@
 ---
 layout: default
 title: Configuration
----
-
-<style>
-.url-example { font-family: monospace; font-size: 0.9em; word-break: break-all; }
-.url-example del { color: #e74c3c; text-decoration: none; }
-.url-example ins { color: #2ecc71; text-decoration: none; }
-</style>
-
-[Home](..) | [Configuration](configuration) | [Architecture](architecture) | [Development](development)
-
+nav_order: 2
 ---
 
 # Configuration

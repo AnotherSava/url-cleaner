@@ -1,10 +1,8 @@
 ---
 layout: default
 title: Architecture
----
-
-[Home](..) | [Configuration](configuration) | [Architecture](architecture) | [Development](development)
-
+parent: Development
+nav_order: 1
 ---
 
 # Architecture

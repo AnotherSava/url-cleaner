@@ -1,11 +1,11 @@
 ---
 layout: default
 title: Development
+nav_order: 3
+has_children: true
 ---
 
-[Home](..) | [Configuration](configuration) | [Architecture](architecture) | [Development](development)
-
----
+# Development
 
 ## Prerequisites
 
@@ -25,6 +25,10 @@ The built executable will be in `src/bin/Debug/net10.0-windows/`.
 ```
 dotnet test tests/
 ```
+
+## Architecture
+
+See the [Architecture reference](development/architecture) for how clipboard monitoring and URL cleaning work.
 
 ## Project structure
 

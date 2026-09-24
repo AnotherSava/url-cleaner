@@ -1,4 +1,16 @@
 title: Another URL Cleaner
 description: A Windows background app that automatically strips tracking parameters from URLs on the clipboard
-theme: jekyll-theme-hacker
+# Pinned: without an @ref, remote_theme rebuilds from the theme's default branch on every deploy
+remote_theme: just-the-docs/just-the-docs@v0.12.0
 baseurl: /url-cleaner
+plugins:
+  - jekyll-remote-theme
+color_scheme: light
+search_enabled: true
+heading_anchors: true
+aux_links:
+  "View on GitHub":
+    - "https://github.com/AnotherSava/url-cleaner"
+
+exclude:
+  - plans/

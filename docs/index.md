@@ -1,10 +1,7 @@
 ---
 layout: default
-title: Another URL Cleaner
----
-
-[Home](.) | [Configuration](pages/configuration) | [Architecture](pages/architecture) | [Development](pages/development)
-
+title: Home
+nav_order: 1
 ---
 
 A Windows background app that automatically strips tracking parameters from URLs on the clipboard.
@@ -38,6 +35,11 @@ Download the latest release from [GitHub Releases](https://github.com/AnotherSav
 2. Run `UrlCleaner.exe` — an icon appears in the system tray
 3. Copy any URL — tracking parameters are automatically stripped
 4. Right-click the tray icon for options: pause cleaning, convert paths, numbers or placeholders, start with Windows, open config location
+
+## Next steps
+
+- **[Configuration](pages/configuration)** — tracking parameters, site rules, all available options
+- **[Developer guide](pages/development)** — building from source, project structure, architecture
 
 ## Code signing policy
 
