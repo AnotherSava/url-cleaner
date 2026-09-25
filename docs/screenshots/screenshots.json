@@ -1,0 +1,23 @@
+{
+  "screenshots": [
+    {
+      "id": "tray-menu",
+      "files": ["tray-menu.png"],
+      "shows": "The tray icon's menu, open: Pause cleaning, the three convert checkboxes and Start with Windows, Open config location, a separator, Exit; no plugin items",
+      "policy": "auto",
+      "capture": {
+        "command": "pwsh -File docs/screenshots/capture/tray-menu.ps1",
+        "steps": [
+          "Deploy the working tree first: the script refuses a running build older than src/TrayApplicationContext.cs, which builds the menu.",
+          "No plugins installed, so the menu shows only the built-in items. A plugin in the install folder's plugins/ adds a checkbox per plugin, which would put it in the frame.",
+          "Checkmarks are the capturing machine's own settings. As first shot: Convert paths, Convert numbers, Convert placeholders and Start with Windows on, Pause cleaning off. A fresh install ships the three convert features off.",
+          "The script posts NotifyIcon's hidden window its tray callback message with WM_RBUTTONUP, which runs NotifyIcon's own ShowContextMenu, so the frame is the menu a right-click opens. It places the pointer near the primary display's tray corner first, since the menu opens at the pointer, and puts it back afterwards.",
+          "Captured with window-shot.ps1 -Method Alpha -Popup from the docs-relevance skill, so the backdrops never take focus and the dropdown stays open.",
+          "No item may be highlighted: a highlighted row means the pointer entered the menu.",
+          "No frame step: the ToolStrip dropdown is square and opaque and draws its own 1px grey border on all four sides."
+        ]
+      },
+      "verifiedAt": "at-capture"
+    }
+  ]
+}
