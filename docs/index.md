@@ -4,7 +4,7 @@ title: Home
 nav_order: 1
 ---
 
-A Windows background app that automatically strips tracking parameters from URLs on the clipboard.
+A Windows clipboard multi-tool: strips URL tracking, fixes paths and numbers, and fills placeholders as you copy.
 
 Another URL Cleaner runs in the system tray and monitors your clipboard. When you copy a URL, it instantly removes tracking parameters and replaces the clipboard contents with the cleaned URL — no manual steps needed.
 

@@ -1,5 +1,5 @@
 title: Another URL Cleaner
-description: A Windows background app that automatically strips tracking parameters from URLs on the clipboard
+description: "A Windows clipboard multi-tool: strips URL tracking, fixes paths and numbers, and fills placeholders as you copy"
 # Pinned: without an @ref, remote_theme rebuilds from the theme's default branch on every deploy
 remote_theme: just-the-docs/just-the-docs@v0.12.0
 baseurl: /url-cleaner
