@@ -8,6 +8,8 @@ nav_order: 2
 
 On first run, a `config.json` file is created next to the executable with sensible defaults. Changes to the config file are picked up automatically — no restart needed.
 
+If the file has an error, a notification says what's wrong and the last good settings stay in use, or the defaults when it happens at startup. The details go to `url-cleaner.log` next to `config.json`, which also records every notification the app shows.
+
 ## Convert paths
 
 `convertPaths` (default: `false`) — when enabled, clipboard text that looks like a single Windows path (drive-letter or relative, but not UNC paths) is automatically converted to use forward slashes. Toggle this from the tray menu or set it directly in `config.json`.
@@ -19,6 +21,27 @@ On first run, a `config.json` file is created next to the executable with sensib
 ## Convert placeholders
 
 `convertPlaceholders` (default: `false`) — when enabled, clipboard text containing {% raw %}`{{kebab-case}}` placeholders (e.g. `{{tvdb-api-key}}`){% endraw %} has each placeholder replaced with a recently copied clipboard value. Copy the value first, then copy the text containing the placeholder — a single placeholder takes the most recently copied value. When several distinct placeholders are present, they draw from the last few copied values in reading order: the value copied first fills the placeholder that appears first. The app remembers the last 10 distinct clipboard values in memory (cleared when it exits). Toggle this from the tray menu or set it directly in `config.json`.
+
+## Feature order
+
+Each copy goes through the features in a fixed order: URL cleaning, path conversion, number conversion, then placeholder filling. The first feature that changes the text ends the run, so the others never see that copy. An optional `pipeline` block changes both halves of that: the order, and whether a feature that changed the text passes its result on to the next.
+
+```json
+"pipeline": {
+  "order": [
+    { "id": "convertPlaceholders", "stop": false },
+    { "id": "urlCleaner" }
+  ]
+}
+```
+
+With this block and placeholders enabled, a template is filled first and the result goes on to URL cleaning. Copying `shoes` and then {% raw %}`https://example.com/?q={{term}}&utm_source=news`{% endraw %} leaves `https://example.com/?q=shoes` on the clipboard. In the default order, URL cleaning takes the template first, strips `utm_source` and ends the run, so the placeholder is never filled.
+
+- `id` names a feature: `urlCleaner`, `convertPaths`, `convertNumbers` or `convertPlaceholders`.
+- `stop` (default: `true`) says whether the run ends once this feature has changed the text. Only a feature marked `"stop": false` passes its result on.
+- Features the list doesn't name run after the listed ones, in the usual order, each with `stop` set.
+- A disabled feature is skipped wherever it is listed.
+- An unknown or repeated id is skipped, and a notification names it.
 
 ## Tracking parameters
 

@@ -3,8 +3,9 @@ bin/
 obj/
 publish/
 
-# Local docs (plans, drafts) — but allow GitHub Pages content through
-docs/plans/
+# Local docs (plans, drafts) — but allow GitHub Pages content through. The trailing /* matters: git can't re-include
+# anything under an excluded directory, so `docs/plans/` would make the exceptions below dead.
+docs/plans/*
 !docs/plans/completed/
 !docs/plans/draft/
 

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The code that doesn't need Windows, as plain net10.0 so a host on another platform can reference it. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>UrlCleaner</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\config\default.json" LogicalName="UrlCleaner.default.json" Link="config\default.json" />
+  </ItemGroup>
+
+</Project>

@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/UrlCleaner.csproj" />
+    <Project Path="src/Core/UrlCleaner.Core.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/UrlCleaner.Tests.csproj" />

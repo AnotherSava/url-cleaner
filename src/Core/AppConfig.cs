@@ -1,12 +1,14 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
-using Microsoft.Win32;
 
 namespace UrlCleaner;
 
 public class AppConfig
 {
+    // A bool that defaults to true is always written: the writer's WhenWritingDefault would drop a false, and the
+    // value would read back as true.
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public bool TrimUrl { get; init; } = true;
     public bool ConvertPaths { get; init; }
     public bool ConvertNumbers { get; init; }
@@ -15,75 +17,72 @@ public class AppConfig
     public List<SiteRule> SiteRules { get; init; } = [];
 
     /// <summary>
+    /// Each plugin's settings, by id. A plugin missing from it is enabled.
+    /// </summary>
+    public Dictionary<string, PluginSettings>? Plugins { get; init; }
+
+    /// <summary>
+    /// The order of the pipeline's entries. Absent means the fallback order.
+    /// </summary>
+    public PipelineConfig? Pipeline { get; init; }
+
+    public bool IsPluginEnabled(string id) => Plugins?.GetValueOrDefault(id)?.Enabled ?? true;
+
+    /// <summary>
     /// Flattens all groups into a single set of param names for fast lookup.
     /// </summary>
     public HashSet<string> GetAllTrackingParams() =>
         new(TrackingParams.SelectMany(g => g.Params), StringComparer.OrdinalIgnoreCase);
 
-    private const string AppName = "UrlCleaner";
-    private const string RunKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Run";
-
     /// <summary>
-    /// Checks whether the app is registered to start with Windows.
+    /// Sets one value in the config file (read-modify-write) and leaves everything else as it was. <paramref name="keys"/>
+    /// is the path to it, such as <c>["convertPaths"]</c> or <c>["plugins", "acme-notes", "enabled"]</c>; missing objects
+    /// along the path are created.
     /// </summary>
-    public static bool GetAutoStart()
-    {
-        using var key = Registry.CurrentUser.OpenSubKey(RunKey);
-        return key?.GetValue(AppName) != null;
-    }
-
-    /// <summary>
-    /// Adds or removes the app from the Windows startup registry.
-    /// </summary>
-    public static void SetAutoStart(bool enabled)
-    {
-        using var key = Registry.CurrentUser.OpenSubKey(RunKey, writable: true);
-        if (key == null) return;
-
-        if (enabled)
-        {
-            var exePath = Environment.ProcessPath;
-            if (exePath != null)
-                key.SetValue(AppName, $"\"{exePath}\"");
-        }
-        else
-        {
-            key.DeleteValue(AppName, throwOnMissingValue: false);
-        }
-    }
-
-    /// <summary>
-    /// Updates a single property in the config file (read-modify-write).
-    /// </summary>
-    public static bool UpdateConfigValue(string propertyName, object value)
+    public static bool UpdateConfigValue(string path, IReadOnlyList<string> keys, object value)
     {
         try
         {
-            var path = ConfigFilePath;
             JsonObject root;
             if (File.Exists(path))
             {
                 var json = File.ReadAllText(path);
                 root = JsonNode.Parse(json) as JsonObject
-                    ?? JsonNode.Parse(JsonSerializer.Serialize(CreateDefault(), JsonOptions)) as JsonObject
+                    ?? JsonNode.Parse(JsonSerializer.Serialize(Default(), JsonOptions)) as JsonObject
                     ?? new JsonObject();
             }
             else
             {
                 // Start from the full default config so we never write a file
                 // that is missing trackingParams / siteRules / etc.
-                var defaultJson = JsonSerializer.Serialize(CreateDefault(), JsonOptions);
+                var defaultJson = JsonSerializer.Serialize(Default(), JsonOptions);
                 root = JsonNode.Parse(defaultJson) as JsonObject ?? new JsonObject();
             }
 
-            root[propertyName] = JsonValue.Create(value);
+            var parent = root;
+            foreach (var key in keys.Take(keys.Count - 1))
+            {
+                if (parent[key] is not JsonObject child)
+                {
+                    if (parent[key] != null)
+                        throw new JsonException($"\"{key}\" isn't an object");
+
+                    child = new JsonObject();
+                    parent[key] = child;
+                }
+
+                parent = child;
+            }
+
+            parent[keys[^1]] = JsonValue.Create(value);
             File.WriteAllText(path, root.ToJsonString(WriteJsonOptions));
             return true;
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException)
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException or ArgumentException or InvalidOperationException)
         {
-            // File may be locked or corrupted — log and continue rather than crash the UI thread.
-            System.Diagnostics.Debug.WriteLine($"Failed to update config: {ex.Message}");
+            // File may be locked or corrupted (a property named twice makes JsonObject throw ArgumentException) — log and
+            // continue rather than crash the UI thread.
+            Logger.Error($"Can't update {string.Join('.', keys)} in {path}", ex);
             return false;
         }
     }
@@ -102,12 +101,10 @@ public class AppConfig
     };
 
     /// <summary>
-    /// The resolved path of the config file used by the last <see cref="Load"/> call.
+    /// The full path of the given config file, or of config.json next to the exe.
     /// </summary>
-    public static string ConfigFilePath { get; private set; } = "";
-
-    private static string DefaultConfigPath =>
-        Path.Combine(AppContext.BaseDirectory, "config.json");
+    public static string ResolvePath(string? configPath) =>
+        Path.GetFullPath(configPath ?? Path.Combine(AppContext.BaseDirectory, "config.json"));
 
     /// <summary>
     /// Loads config from the given path, or from config.json next to the exe.
@@ -115,20 +112,57 @@ public class AppConfig
     /// </summary>
     public static AppConfig Load(string? configPath = null)
     {
-        var path = configPath ?? DefaultConfigPath;
-        ConfigFilePath = Path.GetFullPath(path);
+        var path = ResolvePath(configPath);
         if (File.Exists(path))
         {
             var json = File.ReadAllText(path);
-            return JsonSerializer.Deserialize<AppConfig>(json, JsonOptions) ?? CreateDefault();
+            var loaded = JsonSerializer.Deserialize<AppConfig>(json, JsonOptions) ?? Default();
+            loaded.Validate();
+            return loaded;
         }
 
-        var config = CreateDefault();
+        var config = Default();
         File.WriteAllText(path, JsonSerializer.Serialize(config, JsonOptions));
         return config;
     }
 
-    private static AppConfig CreateDefault()
+    /// <summary>
+    /// Refuses a config the features would trip over: JSON accepts a null list or a null in one, and the code reading
+    /// the config then fails on every copy, or at startup for the pipeline order. Throws <see cref="JsonException"/>, which
+    /// the loader reports like any other broken file.
+    /// </summary>
+    private void Validate()
+    {
+        RequireEntries(TrackingParams, "trackingParams");
+        foreach (var group in TrackingParams)
+            RequireEntries(group.Params, "trackingParams[].params");
+
+        RequireEntries(SiteRules, "siteRules");
+        foreach (var rule in SiteRules)
+        {
+            RequireEntries(rule.Suffix, "siteRules[].suffix");
+            RequireEntries(rule.AdditionalParams, "siteRules[].additionalParams");
+            RequireEntries(rule.ExcludedParams, "siteRules[].excludedParams");
+            RequireEntries(rule.KeepPathFrom, "siteRules[].keepPathFrom");
+            RequireEntries(rule.StripPathSegments, "siteRules[].stripPathSegments");
+            if (rule.StripPathIndex == null)
+                throw new JsonException("siteRules[].stripPathIndex can't be null");
+        }
+
+        if (Pipeline?.Order is { } order && order.Any(entry => entry == null || string.IsNullOrEmpty(entry.Id)))
+            throw new JsonException("pipeline.order has an entry without an id");
+    }
+
+    private static void RequireEntries<T>(List<T>? list, string name) where T : class
+    {
+        if (list == null || list.Any(item => item == null))
+            throw new JsonException($"{name} can't be null or hold a null");
+    }
+
+    /// <summary>
+    /// The embedded default config.
+    /// </summary>
+    public static AppConfig Default()
     {
         // default.json is compiled into the DLL as an embedded resource,
         // so it's always available even if the user deletes files next to the exe.
@@ -136,6 +170,29 @@ public class AppConfig
             .GetManifestResourceStream("UrlCleaner.default.json")!;
         return JsonSerializer.Deserialize<AppConfig>(stream, JsonOptions)!;
     }
+}
+
+public class PluginSettings
+{
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+    public bool Enabled { get; init; } = true;
+}
+
+public class PipelineConfig
+{
+    public List<PipelineEntry>? Order { get; init; }
+}
+
+public class PipelineEntry
+{
+    public string Id { get; init; } = "";
+
+    /// <summary>
+    /// Whether the run ends once this entry has matched. Omitted means set, as in the fallback order, so leaving it
+    /// out of a reordered entry can't silently turn the reorder into fall-through.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+    public bool Stop { get; init; } = true;
 }
 
 public class TrackingParamGroup
@@ -152,6 +209,7 @@ public class SiteRule
     [JsonConverter(typeof(StringOrListConverter))]
     public List<string> Suffix { get; init; } = [];
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public bool Enabled { get; init; } = true;
     public List<string> AdditionalParams { get; init; } = [];
     public List<string> ExcludedParams { get; init; } = [];

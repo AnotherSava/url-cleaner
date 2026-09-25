@@ -14,6 +14,7 @@ Another URL Cleaner runs in the system tray and monitors your clipboard. When yo
 - **Convert paths** — optionally converts Windows backslash paths to forward slashes, toggled from the tray menu
 - **Convert numbers** — optionally strips thousands separators from a copied number (e.g. `10,871.69` → `10871.69`), toggled from the tray menu
 - **Convert placeholders** — optionally fills `{{kebab-case}}` placeholders (e.g. `{{tvdb-api-key}}`) with recently copied clipboard values, toggled from the tray menu
+- **Feature order** — set the order the features run in, and let one pass its result on to the next, via `pipeline` in `config.json`
 - **Start with Windows** option in the tray menu
 
 ## Download

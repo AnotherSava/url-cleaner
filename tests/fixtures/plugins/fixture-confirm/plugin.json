@@ -1,0 +1,15 @@
+{
+  "protocol": 1,
+  "id": "fixture-confirm",
+  "name": "Fixture confirm",
+  "match": {
+    "patterns": [
+      "^https://fixture\\.example/confirm"
+    ]
+  },
+  "run": [
+    "node",
+    "../fixture.js",
+    "confirm"
+  ]
+}

@@ -8,10 +8,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Product>Another URL Cleaner</Product>
     <AssemblyTitle>Another URL Cleaner</AssemblyTitle>
+    <!-- The confirm window renders sharply on a scaled second monitor only with per-monitor DPI awareness. -->
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <!-- Core/ is its own project; without this the exe would compile its sources and its obj/ too. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);Core/**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="..\config\default.json" LogicalName="UrlCleaner.default.json" Link="config\default.json" />
+    <ProjectReference Include="Core\UrlCleaner.Core.csproj" />
   </ItemGroup>
 
 </Project>

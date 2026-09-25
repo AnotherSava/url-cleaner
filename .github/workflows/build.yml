@@ -60,6 +60,7 @@ jobs:
             -DestinationPath "publish/UrlCleaner-$version-self-contained-win-x64.zip"
           Compress-Archive -Path publish/framework-dependent/UrlCleaner.exe,
             publish/framework-dependent/UrlCleaner.dll,
+            publish/framework-dependent/UrlCleaner.Core.dll,
             publish/framework-dependent/UrlCleaner.deps.json,
             publish/framework-dependent/UrlCleaner.runtimeconfig.json `
             -DestinationPath "publish/UrlCleaner-$version-framework-dependent-win-x64.zip"

@@ -1,0 +1,17 @@
+{
+  "protocol": 1,
+  "id": "fixture-hang",
+  "name": "Fixture hang",
+  "match": {
+    "patterns": [
+      "^https://fixture\\.example/hang"
+    ]
+  },
+  "run": [
+    "node",
+    "../fixture.js",
+    "hang",
+    "hang.pid"
+  ],
+  "timeoutSeconds": 5
+}

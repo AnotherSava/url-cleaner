@@ -1,0 +1,15 @@
+{
+  "protocol": 1,
+  "id": "fixture-error",
+  "name": "Fixture error",
+  "match": {
+    "patterns": [
+      "^https://fixture\\.example/error"
+    ]
+  },
+  "run": [
+    "node",
+    "../fixture.js",
+    "error"
+  ]
+}

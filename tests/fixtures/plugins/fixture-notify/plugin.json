@@ -1,0 +1,15 @@
+{
+  "protocol": 1,
+  "id": "fixture-notify",
+  "name": "Fixture notify",
+  "match": {
+    "patterns": [
+      "^https://fixture\\.example/notify"
+    ]
+  },
+  "run": [
+    "node",
+    "../fixture.js",
+    "notify"
+  ]
+}

@@ -3,11 +3,10 @@ using System.Runtime.InteropServices;
 namespace UrlCleaner;
 
 /// <summary>
-/// Listens for clipboard changes via the Win32 clipboard format listener API.
-/// When a URL with tracking parameters is detected, it replaces the clipboard
-/// content with the cleaned URL.
+/// Listens for clipboard changes via the Win32 clipboard format listener API and hands each one to a
+/// <see cref="ClipboardSession"/>, acting as its Windows host.
 /// </summary>
-public class ClipboardMonitor : NativeWindow, IDisposable
+public class ClipboardMonitor : NativeWindow, IClipboardHost, IDisposable
 {
     private const int WM_CLIPBOARDUPDATE = 0x031D;
 
@@ -17,26 +16,22 @@ public class ClipboardMonitor : NativeWindow, IDisposable
     [DllImport("user32.dll", SetLastError = true)]
     private static extern bool RemoveClipboardFormatListener(IntPtr hwnd);
 
-    private AppConfig _config;
-    private readonly string _configFilePath;
-    private DateTime _configLastModified;
-    private string? _lastCleanedResult;
-    private readonly List<string> _history = [];
-    private bool _disposed;
+    [DllImport("user32.dll")]
+    private static extern uint GetClipboardSequenceNumber();
 
-    // How many recent distinct clipboard values to keep for placeholder filling.
-    private const int HistoryLimit = 10;
+    private readonly ClipboardSession _session;
+    private readonly ConfirmWindows _confirmWindows;
+    private bool _disposed;
 
     public bool Paused { get; set; }
 
-    public ClipboardMonitor(AppConfig config, string configFilePath)
+    public ClipboardMonitor(string configFilePath, INotifier notifier)
     {
-        _config = config;
-        _configFilePath = configFilePath;
-        _configLastModified = File.GetLastWriteTimeUtc(configFilePath);
+        _session = new ClipboardSession(this, notifier, configFilePath, Path.Combine(AppContext.BaseDirectory, "plugins"));
+        _confirmWindows = new ConfirmWindows(notifier, _session.CurrentPlugin);
 
         // NativeWindow needs a window handle to receive messages.
-        // CreateHandle() makes an invisible message-only window for us.
+        // CreateHandle() makes an invisible top-level window for us.
         CreateHandle(new CreateParams());
 
         // Tell Windows: "send me WM_CLIPBOARDUPDATE whenever the clipboard changes"
@@ -45,97 +40,57 @@ public class ClipboardMonitor : NativeWindow, IDisposable
 
     protected override void WndProc(ref Message m)
     {
+        // Not awaited: a run that calls a plugin continues on this thread when the plugin answers, and never throws.
         if (m.Msg == WM_CLIPBOARDUPDATE)
-            OnClipboardChanged();
+            _ = _session.HandleChangeAsync();
 
         base.WndProc(ref m);
     }
 
-    private void ReloadConfigIfChanged()
+    public string? TryReadText()
     {
         try
         {
-            var lastWrite = File.GetLastWriteTimeUtc(_configFilePath);
-            if (lastWrite <= _configLastModified)
-                return;
-
-            _config = AppConfig.Load(_configFilePath);
-            _configLastModified = lastWrite;
+            return Clipboard.ContainsText() ? Clipboard.GetText() : null;
         }
-        catch
-        {
-            // File may be mid-write or locked — keep using the current config.
-        }
-    }
-
-    private void OnClipboardChanged()
-    {
-        if (Paused)
-            return;
-
-        ReloadConfigIfChanged();
-
-        try
-        {
-            if (!Clipboard.ContainsText())
-                return;
-
-            var text = Clipboard.GetText();
-            if (text == _lastCleanedResult)
-                return;
-
-            var cleaned = UrlSanitizer.TryClean(text, _config);
-
-            if (cleaned == null && _config.ConvertPaths)
-                cleaned = PathConverter.TryConvert(text);
-
-            if (cleaned == null && _config.ConvertNumbers)
-                cleaned = NumberConverter.TryConvert(text);
-
-            // _history holds values copied before this change (most-recent first), so the
-            // template's own text is never one of its fill candidates.
-            var filledPlaceholder = false;
-            if (cleaned == null && _config.ConvertPlaceholders)
-            {
-                cleaned = PlaceholderConverter.TryConvert(text, _history);
-                filledPlaceholder = cleaned != null;
-            }
-
-            // Record the resulting clipboard content as a future fill candidate — but never a
-            // placeholder template, nor a value produced by placeholder filling. Either would
-            // let a template fill itself (yielding output that still contains the placeholder),
-            // especially since some apps emit several clipboard updates per copy and we would
-            // otherwise re-process our own output.
-            var result = cleaned ?? text;
-            if (!filledPlaceholder && !PlaceholderConverter.ContainsPlaceholder(result))
-                Remember(result);
-
-            if (cleaned == null)
-                return;
-
-            _lastCleanedResult = cleaned;
-            Clipboard.SetText(cleaned);
-        }
-        catch (ExternalException)
+        catch (ExternalException e)
         {
             // Another process has the clipboard locked — nothing we can do, skip this event.
+            Logger.Warn($"Can't read the clipboard, skipping this change: {e.Message}");
+            return null;
         }
     }
 
-    /// <summary>
-    /// Pushes a clipboard value to the front of the history buffer (most-recent first),
-    /// de-duplicating so a repeated copy doesn't consume multiple slots.
-    /// </summary>
-    private void Remember(string value)
+    public bool TryWriteText(string text)
     {
-        if (string.IsNullOrEmpty(value))
-            return;
-
-        _history.Remove(value);
-        _history.Insert(0, value);
-        if (_history.Count > HistoryLimit)
-            _history.RemoveRange(HistoryLimit, _history.Count - HistoryLimit);
+        try
+        {
+            Clipboard.SetText(text);
+            return true;
+        }
+        catch (ExternalException e)
+        {
+            Logger.Warn($"Can't write the clipboard, leaving the copied text: {e.Message}");
+            return false;
+        }
     }
+
+    public uint ChangeCount => GetClipboardSequenceNumber();
+
+    public bool IsPaused => Paused;
+
+    public bool TryBringConfirmForward(string pluginId, string text) => _confirmWindows.TryBringForward(pluginId, text);
+
+    public void OpenConfirm(Proposal proposal) => _confirmWindows.Open(proposal);
+
+    /// <summary>
+    /// The config in use: the last one that loaded, or the embedded default.
+    /// </summary>
+    public AppConfig Config => _session.Config;
+
+    public IReadOnlyList<PluginManifest> Plugins => _session.Plugins;
+
+    public void Refresh() => _session.Refresh();
 
     public void Dispose()
     {

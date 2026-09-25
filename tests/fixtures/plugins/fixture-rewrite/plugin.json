@@ -1,0 +1,15 @@
+{
+  "protocol": 1,
+  "id": "fixture-rewrite",
+  "name": "Fixture rewrite",
+  "match": {
+    "patterns": [
+      "^https://fixture\\.example/rewrite"
+    ]
+  },
+  "run": [
+    "node",
+    "../fixture.js",
+    "rewrite"
+  ]
+}
