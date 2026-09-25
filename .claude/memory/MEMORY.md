@@ -9,23 +9,12 @@
 - .NET 10.0 SDK installed (v10.0.103)
 - License: **GPL v3**
 - `.gitignore` added (dotnet template)
-- Solution file: `url-cleaner.sln` at repo root
+- Solution file: `url-cleaner.slnx` at repo root
 
 ## Repo Layout
-```
-/
-  url-cleaner.sln
-  LICENSE
-  config/
-    default.json          ← default config (embedded resource, grouped tracking params)
-  src/
-    UrlCleaner.csproj     ← targets net10.0-windows
-    Program.cs            ← entry point, runs TrayApplicationContext
-    TrayApplicationContext.cs ← system tray app (NotifyIcon, context menu)
-    AppConfig.cs          ← config model + JSON loader + autostart registry helpers
-    ClipboardMonitor.cs   ← Win32 clipboard listener (NativeWindow + P/Invoke)
-    UrlSanitizer.cs       ← URL cleaning logic (strip tracking params)
-```
+- `src/` is the WinForms exe (`net10.0-windows`): tray, clipboard listener, balloons, confirm window, autostart
+- `src/Core/` is `UrlCleaner.Core` (plain `net10.0`): config, features, pipeline, clipboard session, plugin runner; the tests reference only it
+- Full file list: `docs/pages/development.md`, "Project structure"; component map: `docs/pages/development/architecture.md`
 
 ## Completed Features
 - System tray app (ApplicationContext pattern, NotifyIcon, `SystemIcons.Shield` placeholder)
@@ -36,13 +25,14 @@
 - `suffix` field in site rules accepts string or array (custom `StringOrListConverter`)
 - "Start with Windows" checkbox in tray menu (registry-only, no config field)
 - All config model properties use `init` accessors (immutable after deserialization)
-- `convertPlaceholders`: fills `{{kebab-case}}` placeholders from an in-app clipboard history buffer (`ClipboardMonitor._history`, last 10 distinct values, most-recent first); FIFO mapping — first-copied value → first-appearing placeholder, so a single placeholder takes the most recent copy
+- `convertPlaceholders`: fills `{{kebab-case}}` placeholders from an in-app clipboard history buffer (`ClipboardHistory` in Core, last 10 distinct values, most-recent first); FIFO mapping — first-copied value → first-appearing placeholder, so a single placeholder takes the most recent copy
+- Plugin host (memo 2, plan `2026-09-24-clipboard-plugins.md` in `docs/plans/`, then `docs/plans/completed/`): built-ins and process plugins in one ordered pipeline (`pipeline` block), plugins in `<install>/plugins/<id>/plugin.json`, per-plugin tray checkbox writing `plugins.<id>.enabled`, confirm windows drawn by the host
 
 ## Architecture Notes
-- `default.json` is an **embedded resource** (`LogicalName="UrlCleaner.default.json"`)
+- `default.json` is an **embedded resource** of `UrlCleaner.Core.dll` (`LogicalName="UrlCleaner.default.json"`)
 - Autostart is registry-only (`HKCU\...\Run`) — not stored in config.json
-- URL query parsing is manual (not `HttpUtility`) to preserve original encoding
-- Infinite-loop prevention: `_isUpdatingClipboard` flag in `ClipboardMonitor`
+- URL query parsing is manual (not `HttpUtility`), but it reads `uri.Query` and `uri.AbsolutePath`, which `Uri` has already escaped: `{` `}` come back as `%7B` `%7D` (memo open to keep the original text)
+- Echo guard: `ClipboardSession` skips changes while the clipboard's change count equals the one after its own last write
 
 ## Deployment
 - `deploy` runs `scripts/deploy.sh` → global deploy skill; installs to `INSTALL_DIR` from `config/deploy.env` (gitignored, machine-specific)
@@ -51,6 +41,7 @@
 
 ## CI Notes
 - Each push runs **two** workflows: the tracked `.github/workflows/build.yml`, and GitHub's built-in `dynamic/pages/pages-build-deployment` (auto-triggered because Pages serves `docs/`)
+- The plugin tests run real Node fixtures (`tests/fixtures/plugins/fixture.js`); `windows-latest` (Windows Server 2025) ships Node 22, so CI needs no `setup-node` (checked 2026-09-24)
 - The Pages workflow is GitHub-managed — its internal `actions/checkout@v4` / `upload-artifact@v4` emit a Node.js 20 deprecation warning that **cannot** be fixed from the repo. A lingering Node 20 warning after bumping `build.yml`'s own action versions is expected, not actionable
 
 ## Environment Notes
@@ -66,3 +57,6 @@
 - Prefers clean repo root (user-facing files only, source in `src/`)
 - Prefers config as external files over hardcoded defaults
 - Prefers simplicity — no over-engineering, flat structure until ~10+ files
+
+## Memories
+- [Balloons under Do Not Disturb](project_balloons_under_dnd.md) — balloons vanish under Windows 11 DND; the user chose to leave them, so check DND before debugging "no balloon"
