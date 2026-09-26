@@ -155,7 +155,8 @@ public sealed partial class PluginManifest
             return File.Exists(candidate) ? candidate : null;
         }
 
-        // An entry may be quoted, which Windows' own lookup accepts.
+        // An entry may be quoted: cmd.exe's lookup accepts one, though CreateProcess's search does not, and the runner
+        // starts the full path returned here rather than the bare name.
         foreach (var entry in (pathVariable ?? "").Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
         {
             var directory = entry.Trim('"');
