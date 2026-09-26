@@ -27,7 +27,7 @@ The built executable will be in `src/bin/Debug/net10.0-windows/`, next to `UrlCl
 dotnet test tests/
 ```
 
-The commit gate, `bash .claude/commit-checks.sh`, runs the same restore, build and test as CI, after the repo's conventions checker.
+The commit gate, `bash .claude/commit-checks.sh`, runs the same restore, build and test as CI. Before them it runs the checks CI can't, since they read `~/.claude`: the repo's conventions checker, and `docs/screenshots/check-skill-scripts.ps1`, which checks that the screenshot capture scripts can still reach what they use from the docs-relevance skill. Its header lists what it checks and what it leaves unchecked.
 
 ## Architecture
 

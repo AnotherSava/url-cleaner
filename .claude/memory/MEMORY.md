@@ -46,7 +46,7 @@
 
 ## Environment Notes
 - `dotnet` is on the Git Bash PATH (verified 2026-09-24, SDK 10.0.112). The full path `"/c/Program Files/dotnet/dotnet.exe"` still works where it isn't.
-- Build and test: `bash .claude/commit-checks.sh` runs the conventions checker plus the same restore/build/test as CI's build job (user chose build+test for the gate, 2026-09-24)
+- Build and test: `bash .claude/commit-checks.sh` runs the conventions checker and the skill-script check (`pwsh`, reads `~/.claude`), then the same restore/build/test as CI's build job (user chose build+test for the gate, 2026-09-24)
 
 ## Original Context
 - Forked from [Confiqure/TracklessURL](https://github.com/Confiqure/TracklessURL) (Python, proof-of-concept quality)
