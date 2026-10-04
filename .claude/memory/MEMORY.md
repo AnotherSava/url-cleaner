@@ -26,7 +26,8 @@
 - "Start with Windows" checkbox in tray menu (registry-only, no config field)
 - All config model properties use `init` accessors (immutable after deserialization)
 - `convertPlaceholders`: fills `{{kebab-case}}` placeholders from an in-app clipboard history buffer (`ClipboardHistory` in Core, last 10 distinct values, most-recent first); FIFO mapping — first-copied value → first-appearing placeholder, so a single placeholder takes the most recent copy
-- Plugin host (memo 2, plan `2026-09-24-clipboard-plugins.md` in `docs/plans/`, then `docs/plans/completed/`): built-ins and process plugins in one ordered pipeline (`pipeline` block), plugins in `<install>/plugins/<id>/plugin.json`, per-plugin tray checkbox writing `plugins.<id>.enabled`, confirm windows drawn by the host
+- Plugin host (memo 2, plan `2026-09-24-clipboard-plugins.md` now in `docs/plans/draft/`): built-ins and process plugins in one ordered pipeline (`pipeline` block), plugins in `<install>/plugins/<id>/plugin.json`, per-plugin tray checkbox writing `plugins.<id>.enabled`, confirm windows drawn by the host
+- No plugin consumer yet: What's Next's download plugin, the plan's first consumer, was dropped 2026-10-03 for a browser-extension trigger; a thin forwarder plugin for copied topic links stays possible
 
 ## Architecture Notes
 - `default.json` is an **embedded resource** of `UrlCleaner.Core.dll` (`LogicalName="UrlCleaner.default.json"`)
