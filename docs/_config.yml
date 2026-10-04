@@ -15,3 +15,5 @@ aux_links:
 exclude:
   - plans/
   - screenshots/capture/
+  # Unframed captures, kept as inputs to the frame step, not pages
+  - screenshots/raw/

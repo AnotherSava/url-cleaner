@@ -14,6 +14,3 @@ config.json
 
 # Local deployment config override (replaces installed config.json on deploy)
 config/local.json
-
-# Scratch output (previews, screenshots)
-/tmp/
