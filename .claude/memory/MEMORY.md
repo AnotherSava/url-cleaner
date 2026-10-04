@@ -61,3 +61,4 @@
 
 ## Memories
 - [Balloons under Do Not Disturb](project_balloons_under_dnd.md) — balloons vanish under Windows 11 DND; the user chose to leave them, so check DND before debugging "no balloon"
+- [Plugins are experimental](project_plugins_experimental.md) — no user docs for plugins by design; don't flag their absence as a docs gap
