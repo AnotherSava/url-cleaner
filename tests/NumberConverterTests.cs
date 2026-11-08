@@ -33,6 +33,9 @@ public class NumberConverterTests
     [InlineData("1,0000")]
     [InlineData("1234,567")]
     [InlineData(",123")]
+    [InlineData("0,500")]
+    [InlineData("-0,125")]
+    [InlineData("00,123")]
     [InlineData("1,234.")]
     public void ReturnsNull_ForImproperGrouping(string input)
     {

@@ -6,8 +6,9 @@ public static partial class NumberConverter
 {
     // Matches a number that uses commas as thousands separators, e.g.
     // "10,871.69", "1,000", "-1,234,567.89". Requires at least one comma group
-    // (each exactly 3 digits) so there is something to strip.
-    [GeneratedRegex(@"^-?\d{1,3}(,\d{3})+(\.\d+)?$")]
+    // (each exactly 3 digits) so there is something to strip. The first group
+    // cannot start with 0, so a European decimal such as "0,500" is left alone.
+    [GeneratedRegex(@"^-?[1-9]\d{0,2}(,\d{3})+(\.\d+)?$")]
     private static partial Regex GroupedNumber();
 
     /// <summary>

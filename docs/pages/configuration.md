@@ -16,7 +16,7 @@ If the file has an error, a notification says what's wrong and the last good set
 
 ## Convert numbers
 
-`convertNumbers` (default: `false`) — when enabled, clipboard text that is entirely a number written with comma thousands separators (e.g. `10,871.69`) has the commas stripped (`10871.69`). Only whole-value numbers with properly grouped thousands are converted, so European decimals like `10,5` are left untouched. Toggle this from the tray menu or set it directly in `config.json`.
+`convertNumbers` (default: `false`) — when enabled, clipboard text that is entirely a number written with comma thousands separators (e.g. `10,871.69`) has the commas stripped (`10871.69`). Only whole-value numbers with properly grouped thousands are converted, so European decimals like `10,5` or `0,500` are left untouched. Toggle this from the tray menu or set it directly in `config.json`.
 
 ## Convert placeholders
 
