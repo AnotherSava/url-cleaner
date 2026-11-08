@@ -13,7 +13,7 @@ Another URL Cleaner runs in the system tray and monitors your clipboard. When yo
 - **60+ tracking parameters** stripped by default (Google Analytics, Facebook, HubSpot, Mailchimp, and more)
 - **Per-site rules** with path cleaning, slug removal, fragment stripping, and more
 - **Configurable** via `config.json` — changes are picked up automatically, no restart needed
-- **Pause cleaning** from the tray menu — temporarily disables URL cleaning without exiting
+- **Pause cleaning** from the tray menu — temporarily stops every feature from touching the clipboard, without exiting
 - **Open config location** from the tray menu — opens Explorer with the config file selected
 - **Convert paths** — optionally converts Windows backslash paths to forward slashes, toggled from the tray menu
 - **Convert numbers** — optionally strips thousands separators from a copied number (e.g. `10,871.69` → `10871.69`), toggled from the tray menu

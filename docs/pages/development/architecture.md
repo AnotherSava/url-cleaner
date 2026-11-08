@@ -96,9 +96,10 @@ The cleaner, `UrlSanitizer.TryClean`, processes a URL through these stages in or
 
 ### 1. Validation
 
+- Trim surrounding whitespace when `trimUrl` is set
 - Parse with `Uri.TryCreate`
 - Reject non-HTTP(S) schemes
-- Match domain against site rules by suffix
+- Match domain against site rules by suffix; the first matching rule applies, and one with `enabled: false` leaves the URL unchanged
 
 ### 2. Path cleaning
 

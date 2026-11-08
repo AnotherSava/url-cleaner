@@ -43,6 +43,10 @@ With this block and placeholders enabled, a template is filled first and the res
 - A disabled feature is skipped wherever it is listed.
 - An unknown or repeated id is skipped, and a notification names it.
 
+## Trim URLs
+
+`trimUrl` (default: `true`) — when enabled, whitespace around a copied URL is ignored, and a cleaned URL is written back without it. A URL with nothing to strip is left exactly as copied, whitespace included.
+
 ## Tracking parameters
 
 `trackingParams` — groups of query parameter names to strip from all URLs:
@@ -56,9 +60,17 @@ With this block and placeholders enabled, a template is filled first and the res
 
 ## Site rules
 
-`siteRules` — per-domain overrides matched by domain suffix. Rules are matched by the `suffix` field, which accepts a single string or an array of strings.
+`siteRules` — per-domain overrides matched by domain suffix. Rules are matched by the `suffix` field, which accepts a single string or an array of strings. When several rules match a URL, the first one in the list applies.
 
 Each option is described below with a URL example where <del>red text</del> marks the parts that get removed, followed by the config snippet.
+
+---
+
+**`enabled`** (default: `true`) — set to `false` to leave URLs from this site untouched, tracking parameters included
+
+```json
+{ "suffix": "example.com", "enabled": false }
+```
 
 ---
 
