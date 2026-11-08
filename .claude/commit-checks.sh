@@ -2,7 +2,7 @@
 # What /commit runs before it will draft a commit plan here. This repo commits straight to main, so
 # nothing else reads a change before it reaches main; CI runs after the push, when a break is already public.
 #
-# Runs the conventions checker and the docs-relevance skill's capture-script check, then the same
+# Runs the conventions checker and the screenshot skill's capture-script check, then the same
 # restore, build and test as the build job in .github/workflows/build.yml, in the same order. Keep the
 # two level: a gate that differs from CI disagrees with it about what main requires. The tag-only
 # publish and packaging steps are not here. The checks before restore are not in CI, because they read
@@ -33,7 +33,7 @@ run() {
 }
 
 run "conventions" python3 ~/.claude/conventions/check.py .
-run "skill scripts" pwsh -NoProfile -NonInteractive -File ~/.claude/skills/docs-relevance/scripts/check-capture-scripts.ps1
+run "skill scripts" pwsh -NoProfile -NonInteractive -File ~/.claude/skills/screenshot/scripts/check-capture-scripts.ps1
 run "restore" dotnet restore
 run "build" dotnet build -c Release --no-restore
 run "test" dotnet test tests/ -c Release --no-restore

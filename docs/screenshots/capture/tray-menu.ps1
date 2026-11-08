@@ -36,7 +36,7 @@
 param()
 
 $ErrorActionPreference = 'Stop'
-. (Join-Path $env:USERPROFILE '.claude\skills\docs-relevance\scripts\windows-capture.ps1')
+. (Join-Path $env:USERPROFILE '.claude\skills\screenshot\scripts\windows-capture.ps1')
 
 $WM_TRAYMOUSEMESSAGE = 0x0800
 $WM_RBUTTONUP = 0x0205
