@@ -306,7 +306,27 @@ public class UrlSanitizerTests
         AssertClean("https://site.com/page#track", "https://site.com/page", RuleConfig("site.com", stripFragment: true));
     }
 
-    // ── 16. Integration: default.json deserialization ─────────────────
+    // ── 16. Kept parts come back exactly as copied ────────────────────
+
+    [Theory]
+    [InlineData("https://example.com/?q={{term}}&utm_source=news", "https://example.com/?q={{term}}")]
+    [InlineData("https://example.com/?filter=a|b&utm_source=news", "https://example.com/?filter=a|b")]
+    [InlineData("https://example.com/?q=a%20b&utm_source=news", "https://example.com/?q=a%20b")]
+    [InlineData("https://example.com/?q=a+b&utm_source=news", "https://example.com/?q=a+b")]
+    [InlineData("https://example.com/{{slug}}/a|b?utm_source=news#{{anchor}}", "https://example.com/{{slug}}/a|b#{{anchor}}")]
+    public void PreservesKeptPartsVerbatim(string input, string expected)
+    {
+        AssertClean(input, expected, SimpleConfig("utm_source"));
+    }
+
+    [Fact]
+    public void PreservesKeptPathSegmentsVerbatim_WhenPathChanges()
+    {
+        var config = RuleConfig("example.com", stripPathSegments: ["ref="]);
+        AssertClean("https://example.com/{{id}}/ref=x?q={{term}}", "https://example.com/{{id}}?q={{term}}", config);
+    }
+
+    // ── 17. Integration: default.json deserialization ─────────────────
 
     [Fact]
     public void DefaultConfig_CostcoStripPathIndex()

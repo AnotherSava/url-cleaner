@@ -32,7 +32,7 @@
 ## Architecture Notes
 - `default.json` is an **embedded resource** of `UrlCleaner.Core.dll` (`LogicalName="UrlCleaner.default.json"`)
 - Autostart is registry-only (`HKCU\...\Run`) — not stored in config.json
-- URL query parsing is manual (not `HttpUtility`), but it reads `uri.Query` and `uri.AbsolutePath`, which `Uri` has already escaped: `{` `}` come back as `%7B` `%7D` (memo open to keep the original text)
+- URL cleaning slices path, query and fragment out of the original text (manual parsing, not `HttpUtility`); `Uri` only validates and supplies scheme and host, because its `AbsolutePath`/`Query`/`Fragment` percent-encode `{` `}` `|` and would rewrite kept parts
 - Echo guard: `ClipboardSession` skips changes while the clipboard's change count equals the one after its own last write
 
 ## Deployment
@@ -47,7 +47,7 @@
 
 ## Environment Notes
 - `dotnet` is on the Git Bash PATH (verified 2026-09-24, SDK 10.0.112). The full path `"/c/Program Files/dotnet/dotnet.exe"` still works where it isn't.
-- Build and test: `bash .claude/commit-checks.sh` runs the conventions checker and the docs-relevance skill's `check-capture-scripts.ps1` (`pwsh`, reads `~/.claude`), then the same restore/build/test as CI's build job (user chose build+test for the gate, 2026-09-24)
+- Build and test: `bash .claude/commit-checks.sh` runs the conventions checker and the screenshot skill's `check-capture-scripts.ps1` (`pwsh`, reads `~/.claude`), then the same restore/build/test as CI's build job (user chose build+test for the gate, 2026-09-24)
 
 ## Original Context
 - Forked from [Confiqure/TracklessURL](https://github.com/Confiqure/TracklessURL) (Python, proof-of-concept quality)

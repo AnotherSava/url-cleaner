@@ -123,6 +123,8 @@ Remove the `#...` fragment if `stripFragment` is set.
 
 If any stage changed the URL, return the rebuilt URL. Otherwise return `null` (no change).
 
+The scheme and authority, path, query and fragment are all sliced from the copied text, and `Uri` only validates the URL and supplies its scheme and host. Its `AbsolutePath`, `Query` and `Fragment` percent-encode characters such as `{`, `}` and `|`, so reading them would rewrite parts of the URL no rule touched. What the cleaner keeps comes back exactly as copied.
+
 ## Configuration
 
 Config is loaded from `config.json` next to the executable. If the file doesn't exist, it's generated from `default.json`, embedded as a .NET resource in `UrlCleaner.Core.dll`. The session checks the file's last-write time at every clipboard change and reloads it when it changed.

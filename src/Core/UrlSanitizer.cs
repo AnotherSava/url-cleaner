@@ -32,11 +32,23 @@ public static class UrlSanitizer
         if (rule is { Enabled: false })
             return null;
 
+        // Path, query and fragment come from the original text: Uri.AbsolutePath, Query and Fragment
+        // percent-encode characters such as { } |, which would rewrite parts the cleaner never meant to touch.
+        // Uri is used only to validate the URL and read its scheme and host.
+        var schemeEnd = text.IndexOf("://", StringComparison.Ordinal) + "://".Length;
+        var authorityEnd = text.IndexOfAny(['/', '?', '#'], schemeEnd);
+        if (authorityEnd < 0) authorityEnd = text.Length;
+        var baseUrl = text[..authorityEnd];
+        var fragmentStart = text.IndexOf('#', authorityEnd);
+        if (fragmentStart < 0) fragmentStart = text.Length;
+        var queryStart = text.IndexOf('?', authorityEnd, fragmentStart - authorityEnd);
+        if (queryStart < 0) queryStart = fragmentStart;
+
         var pathChanged = false;
         var queryChanged = false;
 
         // --- Path cleaning ---
-        var path = uri.AbsolutePath;
+        var path = text[authorityEnd..queryStart];
 
         // keepPathFrom: discard segments before the anchor
         if (rule is { KeepPathFrom.Count: > 0 })
@@ -116,8 +128,8 @@ public static class UrlSanitizer
         }
 
         // --- Query cleaning ---
-        var query = uri.Query;
-        var hasQuery = !string.IsNullOrEmpty(query) && query != "?";
+        var query = text[queryStart..fragmentStart];
+        var hasQuery = query.Length > 1;
         string? cleanedQuery = null;
 
         if (hasQuery)
@@ -171,7 +183,7 @@ public static class UrlSanitizer
         }
 
         // --- Fragment cleaning ---
-        var fragment = uri.Fragment; // "" or "#..."
+        var fragment = text[fragmentStart..]; // "" or "#..."
         var fragmentChanged = false;
         if (rule is { StripFragment: true } && fragment.Length > 0)
         {
@@ -181,17 +193,6 @@ public static class UrlSanitizer
 
         if (!pathChanged && !queryChanged && !fragmentChanged)
             return null;
-
-        // Rebuild URL: scheme + authority + cleaned path + cleaned query + fragment
-        // Use original text up to the path to preserve exact formatting
-        var afterScheme = uri.Scheme.Length + "://".Length;
-        var authorityEnd = text.IndexOfAny(['/', '?', '#'], afterScheme);
-        if (authorityEnd < 0) authorityEnd = text.Length;
-        var baseUrl = text[..authorityEnd];
-
-        // If the original URL had no explicit path slash, don't inject one
-        if (authorityEnd >= text.Length || text[authorityEnd] != '/')
-            path = "";
 
         return baseUrl + path + (cleanedQuery ?? query) + fragment;
     }
