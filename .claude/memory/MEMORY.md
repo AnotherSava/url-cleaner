@@ -46,6 +46,7 @@
 - The Pages workflow is GitHub-managed — its internal `actions/checkout@v4` / `upload-artifact@v4` emit a Node.js 20 deprecation warning that **cannot** be fixed from the repo. A lingering Node 20 warning after bumping `build.yml`'s own action versions is expected, not actionable
 
 ## Environment Notes
+- Windows-only repo: the Mac (`air`) holds no clone (searched 2026-11-08), so convention steps that read "both clones" have one side, and no peer `/pull` handoff applies
 - `dotnet` is on the Git Bash PATH (verified 2026-09-24, SDK 10.0.112). The full path `"/c/Program Files/dotnet/dotnet.exe"` still works where it isn't.
 - Build and test: `bash .claude/commit-checks.sh` runs the conventions checker and the screenshot skill's `check-capture-scripts.ps1` (`pwsh`, reads `~/.claude`), then the same restore/build/test as CI's build job (user chose build+test for the gate, 2026-09-24)
 
