@@ -36,7 +36,7 @@
 - Echo guard: `ClipboardSession` skips changes while the clipboard's change count equals the one after its own last write
 
 ## Deployment
-- `deploy` runs `scripts/deploy.sh` → global deploy skill; installs to `INSTALL_DIR` from `config/deploy.env` (gitignored, machine-specific)
+- Deploy runs through the global deploy skill's `run.sh` (no per-repo `scripts/` wrapper); it reads the committed, shared `config/deploy.env` (`DEPLOY_TYPE=dotnet`, `INSTALL_DIR=C:/Programs/url-cleaner`), so an edit there changes the install path for every clone
 - **Config layering**: `config/default.json` = prod default (embedded, shipped to all users on first run); `config/local.json` (gitignored) = personal override that deploy **copies wholesale over** the installed `config.json` — so it must be a COMPLETE config and will drift from `default.json` as tracking params/site rules change
 - Convert features ship OFF in prod, ON locally: `convertPaths` + `convertNumbers` + `convertPlaceholders` are `false` in `default.json`, `true` in `local.json`
 
