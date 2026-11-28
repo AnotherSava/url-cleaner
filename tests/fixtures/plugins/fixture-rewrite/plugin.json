@@ -11,5 +11,6 @@
     "node",
     "../fixture.js",
     "rewrite"
-  ]
+  ],
+  "timeoutSeconds": 60
 }

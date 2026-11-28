@@ -222,8 +222,6 @@ public sealed class PluginRunnerTests : IDisposable
         Assert.NotNull(plugin.FindExecutable(Environment.GetEnvironmentVariable("PATH")));
     }
 
-    // The committed fixture-rewrite/plugin.json sets no timeoutSeconds, so this test runs Node under
-    // PluginManifest.DefaultTimeoutSeconds, not TempPlugins.FixtureTimeoutSeconds, and can time out on a loaded machine.
     [Fact]
     public async Task InstallableRewriteFixture_RunsFromItsOwnFolder()
     {
