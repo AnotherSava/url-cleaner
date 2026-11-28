@@ -20,11 +20,15 @@ public sealed class PluginRunnerTests : IDisposable
     /// <summary>
     /// Installs a plugin that runs the fixture script in <paramref name="mode"/>.
     /// </summary>
-    private PluginManifest Fixture(string mode, string? parameter = null, int timeoutSeconds = 10) =>
+    private PluginManifest Fixture(string mode, string? parameter = null, int timeoutSeconds = TempPlugins.FixtureTimeoutSeconds) =>
         _plugins.InstallFixture($"fixture-{++_count}", ".", timeoutSeconds, parameter == null ? [mode] : [mode, parameter]);
 
-    private static T AnswerOf<T>(PluginOutcome outcome) where T : PluginAnswer =>
-        Assert.IsType<T>(Assert.IsType<Answered>(outcome).Answer);
+    private static T AnswerOf<T>(PluginOutcome outcome) where T : PluginAnswer
+    {
+        if (outcome is Failed failed)
+            Assert.Fail($"Expected an answer, but the plugin failed: {failed.Reason}");
+        return Assert.IsType<T>(Assert.IsType<Answered>(outcome).Answer);
+    }
 
     private static string ReasonOf(PluginOutcome outcome) => Assert.IsType<Failed>(outcome).Reason;
 
@@ -218,6 +222,8 @@ public sealed class PluginRunnerTests : IDisposable
         Assert.NotNull(plugin.FindExecutable(Environment.GetEnvironmentVariable("PATH")));
     }
 
+    // The committed fixture-rewrite/plugin.json sets no timeoutSeconds, so this test runs Node under
+    // PluginManifest.DefaultTimeoutSeconds, not TempPlugins.FixtureTimeoutSeconds, and can time out on a loaded machine.
     [Fact]
     public async Task InstallableRewriteFixture_RunsFromItsOwnFolder()
     {

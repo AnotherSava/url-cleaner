@@ -35,9 +35,16 @@ public sealed class TempPlugins : IDisposable
     public static readonly string FixtureScript = Path.Combine(AppContext.BaseDirectory, "fixtures", "plugins", "fixture.js");
 
     /// <summary>
+    /// The deadline a fixture gets unless a test sets one. Node can take over 10 seconds to start and answer when the
+    /// machine is loaded, and a test that isn't about the deadline must not fail on it.
+    /// </summary>
+    public const int FixtureTimeoutSeconds = 60;
+
+    /// <summary>
     /// Installs a plugin that runs the fixture script with <paramref name="arguments"/>, the mode first.
     /// </summary>
-    public PluginManifest InstallFixture(string id, string pattern, params string[] arguments) => InstallFixture(id, pattern, 10, arguments);
+    public PluginManifest InstallFixture(string id, string pattern, params string[] arguments) =>
+        InstallFixture(id, pattern, FixtureTimeoutSeconds, arguments);
 
     public PluginManifest InstallFixture(string id, string pattern, int timeoutSeconds, params string[] arguments)
     {
